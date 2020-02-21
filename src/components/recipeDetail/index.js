@@ -26,9 +26,9 @@ export default function RecipeDetail(props) {
     docRef.get().then(doc => {
       setRecipe({ ...doc.data(), id: doc.id })
     })
-      .catch(err => {
-        console.log('ERROR', err)
-      })
+    .catch(err => {
+      console.log('ERROR', err)
+    })
 
     toggleViewOrder()
 
@@ -46,6 +46,10 @@ export default function RecipeDetail(props) {
 
   const updateBodyDirection = () => {
     setBodyDirection(window.innerWidth > 600 ? 'row' : columnDirection)
+  }
+
+  const strikeThru = (e) => {
+    e.currentTarget.style.textDecoration = e.currentTarget.style.textDecoration ? '' : 'line-through'
   }
 
   return (
@@ -70,7 +74,7 @@ export default function RecipeDetail(props) {
                       : <Button href={recipe.orig_link} target="_none" variant="outlined" className="mr-2">visit original site</Button>
                   }
                   {
-                    user.uid === recipe.uid
+                    user && user.uid === recipe.uid
                       ? <Link to={`/edit/${recipe.id}`}>
                           <Button variant="outlined" className="mr-2">edit recipe</Button>
                         </Link>
@@ -89,7 +93,7 @@ export default function RecipeDetail(props) {
                   <ul>
                     {
                       recipe.directions.split('<SEP>').map((dir, idx) => (
-                        <li className="mb-2 detail-li" key={idx}>{dir}</li>
+                        <li onClick={strikeThru} className="mb-2 detail-li" key={idx}>{dir}</li>
                       ))
                     }
                   </ul>
@@ -100,7 +104,7 @@ export default function RecipeDetail(props) {
                   <ul>
                     {
                       recipe.ingredients.split('<SEP>').map((ing, idx) => (
-                        <li className="mb-2 detail-li" key={idx}>{ing}</li>
+                        <li onClick={strikeThru} className="mb-2 detail-li" key={idx}>{ing}</li>
                       ))
                     }
                   </ul>
@@ -118,7 +122,7 @@ export default function RecipeDetail(props) {
                   <ul>
                     {
                       recipe.notes.split("<SEP>").map((note, idx) => (
-                        <li className="mb-2" key={idx}>{note}</li>
+                        <li onClick={strikeThru} className="mb-2" key={idx}>{note}</li>
                       ))
                     }
                   </ul>
