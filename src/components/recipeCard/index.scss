@@ -1,0 +1,32 @@
+.recipe-card-inner {
+  width: 15vw;
+  overflow: hidden;
+}
+
+.recipe-card-img {
+  width: 15vw;
+  height: 10vw;
+  border-radius: 2%;
+}
+
+@media only screen and (max-width: 1000px) {
+  .recipe-card-inner {
+    width: 25vw;
+  }
+  
+  .recipe-card-img {
+    width: 25vw;
+    height: 16.6vw;
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  .recipe-card-inner {
+    width: 43vw;
+  }
+
+  .recipe-card-img {
+    width: 43vw;
+    height: 28.6vw;
+  }
+}
