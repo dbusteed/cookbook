@@ -9,7 +9,7 @@ import { Button } from '@material-ui/core'
 export default function EditRecipe(props) {
   
   // context variables
-  const {user, setUser} = useContext(UserContext)
+  const { user } = useContext(UserContext)
 
   // state variables
   const [recipe, setRecipe] = useState({uid: ''})
@@ -258,7 +258,7 @@ export default function EditRecipe(props) {
               view image
             </Dropdown.Toggle>
             <Dropdown.Menu>
-              <img style={{maxWidth: "25vw"}} src={/https?:/.test(recipe.img_path) ? recipe.img_path : `https://firebasestorage.googleapis.com/v0/b/cookbook-96444.appspot.com/o/images%2F${recipe.img_path}?alt=media`} />
+              <img style={{maxWidth: "25vw"}} alt="" src={/https?:/.test(recipe.img_path) ? recipe.img_path : `https://firebasestorage.googleapis.com/v0/b/sylvias-cookbook.appspot.com/o/images%2F${recipe.img_path}?alt=media`} />
             </Dropdown.Menu>
           </Dropdown>
         </Form.Group>

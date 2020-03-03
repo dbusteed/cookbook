@@ -22,7 +22,7 @@ export default function AddRecipe(props) {
   const [error, setError] = useState([])
 
   // context variables
-  const {user, setUser} = useContext(UserContext)
+  const { user } = useContext(UserContext)
 
   // other hooks
   const history = useHistory()
@@ -56,6 +56,7 @@ export default function AddRecipe(props) {
 
     if (formErrors.length > 0) {
       setError(formErrors)
+      window.scrollTo(0, 0)
       return
     }
 
@@ -95,9 +96,9 @@ export default function AddRecipe(props) {
       .then(res => {
         console.log('great success')
       })
-      // .then(() => {
-        
-      // })
+      .then(() => {
+        history.push('/') // need to refresh page context?
+      })
       .catch(err => {
         console.log('failure')
       })
@@ -147,7 +148,7 @@ export default function AddRecipe(props) {
           <Form.Control as="textarea"
             value={recipe.directions}
             onChange={e => setRecipe({...recipe, directions: e.target.value})}
-            placeholder={"enter each ingredient separated by a new line"}
+            placeholder={"enter each direction separated by a new line"}
             rows="5"/>
         </Form.Group>
 

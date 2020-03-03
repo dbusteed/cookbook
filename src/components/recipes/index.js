@@ -6,9 +6,9 @@ import { FilterContext, RecipeContext, UserContext } from '../../filterContext'
 export default function Recipes(props) {
 
   // context variables
-  const { recipes, setRecipes } = useContext(RecipeContext)
-  const { filter, setFilter } = useContext(FilterContext)
-  const { user, setUser } = useContext(UserContext)
+  const { recipes } = useContext(RecipeContext)
+  const { filter } = useContext(FilterContext)
+  const { user } = useContext(UserContext)
 
   let renderRecipes = recipes
 

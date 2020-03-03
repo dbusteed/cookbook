@@ -10,7 +10,7 @@ import { Button } from '@material-ui/core'
 export default function RecipeDetail(props) {
 
   // context variables
-  const { user, setUser } = useContext(UserContext)
+  const { user } = useContext(UserContext)
 
   // state variables
   const [recipe, setRecipe] = useState(null)
