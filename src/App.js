@@ -23,6 +23,7 @@ export default function App() {
     let recRef = db.collection('recipes')
     let docs = []
 
+    // console.log('grabbing recipes!')
     recRef.get().then(query => {
       query.forEach(doc => {
         docs.push({...doc.data(), id: doc.id})
@@ -34,7 +35,7 @@ export default function App() {
 
     })
     .catch(err => {
-      console.log('yeet', err)
+      console.log(err)
     })
 
     // eslint-disable-next-line react-hooks/exhaustive-deps

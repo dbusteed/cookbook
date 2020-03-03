@@ -22,11 +22,11 @@
 
 @media only screen and (max-width: 600px) {
   .recipe-card-inner {
-    width: 43vw;
+    width: 60vw;
   }
 
   .recipe-card-img {
-    width: 43vw;
-    height: 28.6vw;
+    width: 60vw;
+    height: 40vw;
   }
 }

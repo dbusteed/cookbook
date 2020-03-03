@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react'
-import { Form, FormControl, Button , Dropdown, ListGroup } from 'react-bootstrap'
+import { Form, FormControl } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 import firebase from '../../firebase'
 import { FilterContext, UserContext } from '../../filterContext'
@@ -14,7 +14,6 @@ import AddRoundedIcon from '@material-ui/icons/AddRounded'
 import ExitToAppRoundedIcon from '@material-ui/icons/ExitToAppRounded'
 import FilterListRoundedIcon from '@material-ui/icons/FilterListRounded'
 import MenuRoundedIcon from '@material-ui/icons/MenuRounded'
-import SearchRoundedIcon from '@material-ui/icons/SearchRounded'
 
 import Divider from '@material-ui/core/Divider'
 
@@ -37,6 +36,8 @@ export default function NavBar() {
         console.log('no user!')
       }
     })
+    
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handleSignout = () => {
@@ -49,6 +50,12 @@ export default function NavBar() {
   const handleSearch = (e) => {
     e.preventDefault()
     setFilter({...filter, search: search.toLowerCase()})
+  }
+
+  // TODO
+  const otherHandleSearch = (s) => {
+    setSearch(s)
+    setFilter({...filter, search: s.toLowerCase()})
   }
 
   const handleCategory = (cat) => {
@@ -85,8 +92,7 @@ export default function NavBar() {
 
         <div className="navbox center-nav-box">
           <Form onSubmit={handleSearch} inline>
-            <FormControl type="text" placeholder="Search" value={search} onChange={e => setSearch(e.target.value)} />
-            {/* <IconButton type="submit"><SearchRoundedIcon style={{color: "black"}} fontSize="large" /></IconButton> */}
+            <FormControl type="text" placeholder="Search" value={search}  onChange={e => otherHandleSearch(e.target.value)} />            
           </Form>
 
           <IconButton aria-controls="full-filter-menu" aria-haspopup="true" onClick={(e) => setFilterMenu(e.currentTarget)}>
@@ -181,8 +187,8 @@ export default function NavBar() {
           </IconButton>
           
           <Form onSubmit={handleSearch} style={{flexFlow: "nowrap", justifyContent: "flex-end", flexGrow: "1"}} inline> 
-            <FormControl type="text" placeholder="Search" className="mr-1" value={search} onChange={e => setSearch(e.target.value)} />
-            <IconButton type="submit"><SearchRoundedIcon style={{color: "black"}} fontSize="large" /></IconButton>
+            <FormControl type="text" placeholder="Search" className="mr-3" value={search} onChange={e => otherHandleSearch(e.target.value)} />
+            {/* <FormControl type="text" placeholder="Search" className="mr-3" value={search} onChange={e => setSearch(e.target.value)} /> */}
           </Form>
           
           {/* opens with the button is pressed */}
