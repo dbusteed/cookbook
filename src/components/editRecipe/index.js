@@ -5,6 +5,7 @@ import { UserContext } from '../../filterContext'
 import { useRouteMatch, useHistory } from 'react-router-dom'
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@material-ui/core'
 import { Button } from '@material-ui/core'
+import categories from '../../other/categories'
 
 export default function EditRecipe(props) {
   
@@ -185,7 +186,7 @@ export default function EditRecipe(props) {
             <DialogTitle id="alert-dialog-title">{`Delete ${recipe.name}?`}</DialogTitle>
             <DialogContent>
               <DialogContentText id="alert-dialog-description">
-                Are you sure you want to delete {recipe.name}?
+                Are you sure you want to delete this recipe?
               </DialogContentText>
             </DialogContent>
             <DialogActions>
@@ -235,11 +236,11 @@ export default function EditRecipe(props) {
           <Form.Control as="select"
             value={recipe.category}
             onChange={e => setRecipe({...recipe, category: e.target.value})}>
-            <option>Breakfast</option>
-            <option>Lunch/Dinner</option>
-            <option>Snacks/Sides</option>
-            <option>Desserts</option>
-            <option>Other</option>
+            {
+              categories.map(cat => (
+                <option key={cat}>{cat}</option>
+              ))
+            }
           </Form.Control>
         </Form.Group>
 

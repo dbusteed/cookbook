@@ -5,6 +5,7 @@ import firebase from '../../firebase'
 import { UserContext } from '../../filterContext'
 import { useHistory } from 'react-router-dom'
 import { Button } from '@material-ui/core'
+import categories from '../../other/categories'
 
 export default function AddRecipe(props) {
   
@@ -156,11 +157,11 @@ export default function AddRecipe(props) {
           <Form.Label>Category</Form.Label>
           <Form.Control as="select"
             onChange={e => setRecipe({...recipe, category: e.target.value})}>
-            <option>Breakfast</option>
-            <option>Lunch/Dinner</option>
-            <option>Snacks/Sides</option>
-            <option>Desserts</option>
-            <option>Other</option>
+            {
+              categories.map(cat => (
+                <option key={cat}>{cat}</option>
+              ))
+            }
           </Form.Control>
         </Form.Group>
 

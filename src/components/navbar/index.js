@@ -3,19 +3,21 @@ import { Form, FormControl } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 import firebase from '../../firebase'
 import { FilterContext, UserContext } from '../../filterContext'
+import categories from '../../other/categories'
+
+// material stuff
 import { Drawer, List, ListItem, ListItemText, ListItemIcon, Collapse } from '@material-ui/core'
 import Menu from '@material-ui/core/Menu'
 import MenuItem from '@material-ui/core/MenuItem'
 import IconButton from '@material-ui/core/IconButton'
+import Divider from '@material-ui/core/Divider'
 
-// icons TODO all rounded
+// material icons
 import HomeRoundedIcon from '@material-ui/icons/HomeRounded'
 import AddRoundedIcon from '@material-ui/icons/AddRounded'
 import ExitToAppRoundedIcon from '@material-ui/icons/ExitToAppRounded'
 import FilterListRoundedIcon from '@material-ui/icons/FilterListRounded'
 import MenuRoundedIcon from '@material-ui/icons/MenuRounded'
-
-import Divider from '@material-ui/core/Divider'
 
 export default function NavBar() {
 
@@ -75,7 +77,7 @@ export default function NavBar() {
     setUser(user)
   })
 
-  const categories = ["Breakfast", "Lunch/Dinner", "Snacks/Sides", "Desserts", "Other"]
+  // const categories = ["Breakfast", "Lunch/Dinner", "Snacks/Sides", "Desserts", "Other"]
 
   return (
     <>
