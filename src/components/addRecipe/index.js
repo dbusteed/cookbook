@@ -158,7 +158,7 @@ export default function AddRecipe(props) {
             onChange={e => setRecipe({...recipe, category: e.target.value})}>
             <option>Breakfast</option>
             <option>Lunch/Dinner</option>
-            <option>Snack/Sides</option>
+            <option>Snacks/Sides</option>
             <option>Desserts</option>
             <option>Other</option>
           </Form.Control>
