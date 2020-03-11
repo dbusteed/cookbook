@@ -1,7 +1,10 @@
 import { createContext } from "react"
 
 export const startingFilter = {
-  search: '',
+  search: {
+    title: '',
+    ingredients: ''
+  },
   category: '',
   userRecipes: false
 }

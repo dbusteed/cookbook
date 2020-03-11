@@ -2,9 +2,9 @@ import React, { useState, useContext } from 'react'
 import { Form } from 'react-bootstrap'
 import firebase from '../../firebase'
 import { secret } from '../../secret' // "secret" is just some value
-import { UserContext } from '../../filterContext'
+import { UserContext } from '../../context'
 import { useHistory, Link } from 'react-router-dom'
-import { Button } from '@material-ui/core'
+import { Button, Paper } from '@material-ui/core'
 
 export default function Signup(props) {
 
@@ -77,11 +77,14 @@ export default function Signup(props) {
   return (
     <div style={{display: 'flex', flexDirection: 'row'}}>
 
+      <div className="content-gutter"></div>
       <div className="content-gutter-no-collapse"></div>
 
       <div className="form-view" style={{flexGrow: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center'}}>
 
-        <h1 className="text-center">signup</h1>
+        <Paper className="login-container" elevation={5}>
+
+        <h1 className="text-center">Signup</h1>
 
         {
           errors
@@ -121,9 +124,12 @@ export default function Signup(props) {
           </p>
         </div>
 
+        </Paper>
+
       </div>
 
       <div className="content-gutter-no-collapse"></div>
+      <div className="content-gutter"></div>
       
     </div>
   )

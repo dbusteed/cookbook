@@ -1,12 +1,13 @@
 import React, { useState, useContext, useEffect } from 'react'
+import './index.css'
 import { Form, FormControl } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 import firebase from '../../firebase'
-import { FilterContext, UserContext } from '../../filterContext'
+import { FilterContext, UserContext, startingFilter } from '../../context'
 import categories from '../../other/categories'
 
 // material stuff
-import { Drawer, List, ListItem, ListItemText, ListItemIcon, Collapse } from '@material-ui/core'
+import { Drawer, List, ListItem, ListItemText, ListItemIcon, Collapse, TextField, Button, Paper } from '@material-ui/core'
 import Menu from '@material-ui/core/Menu'
 import MenuItem from '@material-ui/core/MenuItem'
 import IconButton from '@material-ui/core/IconButton'
@@ -18,11 +19,15 @@ import AddRoundedIcon from '@material-ui/icons/AddRounded'
 import ExitToAppRoundedIcon from '@material-ui/icons/ExitToAppRounded'
 import FilterListRoundedIcon from '@material-ui/icons/FilterListRounded'
 import MenuRoundedIcon from '@material-ui/icons/MenuRounded'
+import SearchRoundedIcon from '@material-ui/icons/SearchRounded'
 
 export default function NavBar() {
 
   const [search, setSearch] = useState('')
+  const [advName, setAdvName] = useState('')
+  const [advIng, setAdvIng] = useState('')
   const [drawer, setDrawer] = useState(false)
+  const [searchDrawer, setSearchDrawer] = useState(false)
   const [drawerFilter, setDrawerFilter] = useState(false)
   const [filterMenu, setFilterMenu] = useState(null)
   
@@ -49,15 +54,9 @@ export default function NavBar() {
     setFilter({...filter, userRecipes: false})
   }
 
-  const handleSearch = (e) => {
-    e.preventDefault()
-    setFilter({...filter, search: search.toLowerCase()})
-  }
-
-  // TODO
-  const otherHandleSearch = (s) => {
+  const handleSearch = (s) => {
     setSearch(s)
-    setFilter({...filter, search: s.toLowerCase()})
+    setFilter({...filter, search: {...filter.search, title: s.toLowerCase()}})
   }
 
   const handleCategory = (cat) => {
@@ -73,28 +72,36 @@ export default function NavBar() {
     setDrawerFilter(false)
   }
 
+  const resetFilter = () => {
+    setSearch('')
+    setAdvName('')
+    setAdvIng('')
+    setFilter({...startingFilter, userRecipes: user ? true : false})
+  }
+
   firebase.auth().onAuthStateChanged(user => {
     setUser(user)
   })
 
-  // const categories = ["Breakfast", "Lunch/Dinner", "Snacks/Sides", "Desserts", "Other"]
-
   return (
     <>
-      <div className="full-navbar">
+      <Paper className="full-navbar my-nav" elevation={3}>
         <div className="navbox side-nav-box">
           <div className="navitem">
-            <Link to="/">
+            <Link to="/" onClick={resetFilter}>
               <IconButton>
                 <HomeRoundedIcon style={{color: "black"}} fontSize="large" />
               </IconButton>
             </Link>
+            {/* <Button onClick={() => console.log('debug')}>
+              DEBUG
+            </Button> */}
           </div>
         </div>
 
         <div className="navbox center-nav-box">
-          <Form onSubmit={handleSearch} inline>
-            <FormControl type="text" placeholder="Search" value={search}  onChange={e => otherHandleSearch(e.target.value)} />            
+          <Form onSubmit={e => e.preventDefault()} inline>
+            <FormControl type="text" placeholder="Search" value={search}  onChange={e => handleSearch(e.target.value)} />            
           </Form>
 
           <IconButton aria-controls="full-filter-menu" aria-haspopup="true" onClick={(e) => setFilterMenu(e.currentTarget)}>
@@ -113,6 +120,15 @@ export default function NavBar() {
             onClose={() => setFilterMenu(null)}
             style={{padding: "10px"}}
           >
+            <MenuItem onClick={() => {
+              setSearchDrawer(true)
+              setFilterMenu(null)
+            }}>
+              Advanced Search
+            </MenuItem>
+
+            <hr />
+
             <MenuItem 
               selected={filter.category === ''} 
               onClick={() => {
@@ -152,6 +168,21 @@ export default function NavBar() {
               : null
             }
           </Menu>
+
+          <Drawer anchor="top" open={searchDrawer} onClose={() => setSearchDrawer(false)}> 
+            <div className="adv-search-container">
+              <h2>Advanced Search</h2>
+              <hr />
+              <TextField className="mb-2" value={advName} onChange={e => setAdvName(e.target.value)} label="search by name" variant="outlined" />
+              <TextField className="mb-2" value={advIng} onChange={e => setAdvIng(e.target.value)} label="search by ingredient" variant="outlined" />
+              <Button className="my-2" variant="outlined" onClick={() => {                
+                setFilter({...filter, search: {title: advName, ingredients: advIng}})
+                setDrawer(false)
+                setSearchDrawer(false)
+              }}>search</Button>
+            </div>
+          </Drawer>
+
         </div>
 
         <div className="navbox side-nav-box side-nav-box-right">
@@ -180,17 +211,16 @@ export default function NavBar() {
             }
           </div>
         </div>
-      </div>
+      </Paper>
 
-      <div className="mini-navbar">
+      <Paper className="mini-navbar my-nav" elevation={3}>
         <div className="mini-navbar-top">
           <IconButton onClick={() => setDrawer(true)}>
             <MenuRoundedIcon style={{color: "black"}} fontSize="large" />
           </IconButton>
           
-          <Form onSubmit={handleSearch} style={{flexFlow: "nowrap", justifyContent: "flex-end", flexGrow: "1"}} inline> 
-            <FormControl type="text" placeholder="Search" className="mr-3" value={search} onChange={e => otherHandleSearch(e.target.value)} />
-            {/* <FormControl type="text" placeholder="Search" className="mr-3" value={search} onChange={e => setSearch(e.target.value)} /> */}
+          <Form onSubmit={e => e.preventDefault()} style={{flexFlow: "nowrap", justifyContent: "flex-end", flexGrow: "1"}} inline> 
+            <FormControl type="text" placeholder="Search" className="mr-3" value={search} onChange={e => handleSearch(e.target.value)} />
           </Form>
           
           {/* opens with the button is pressed */}
@@ -202,7 +232,14 @@ export default function NavBar() {
                     <ListItemIcon><HomeRoundedIcon style={{color: "black"}} /></ListItemIcon>
                     <ListItemText primary={"Home"} />
                   </ListItem>
-                </Link> 
+                </Link>
+                <ListItem onClick={() => {
+                  setSearchDrawer(true)
+                  setFilterMenu(null)
+                }}>
+                  <ListItemIcon><SearchRoundedIcon style={{color: "black"}} /></ListItemIcon>
+                  <ListItemText primary={"Advanced Search"} />
+                </ListItem>
                 <ListItem onClick={() => setDrawerFilter(!drawerFilter)}>
                   <ListItemIcon><FilterListRoundedIcon style={{color: "black"}} /></ListItemIcon>
                   <ListItemText primary={"Filter Recipes"} />
@@ -275,7 +312,7 @@ export default function NavBar() {
             </div>
           </Drawer>
         </div>
-      </div>
+      </Paper>
     </>
   )
 }

@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react'
-import { Form, Dropdown, Spinner } from 'react-bootstrap'
+import { Form, Spinner } from 'react-bootstrap'
 import firebase from '../../firebase'
-import { UserContext } from '../../filterContext'
+import { UserContext } from '../../context'
 import { useRouteMatch, useHistory } from 'react-router-dom'
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@material-ui/core'
 import { Button } from '@material-ui/core'
@@ -15,7 +15,7 @@ export default function EditRecipe(props) {
   // state variables
   const [recipe, setRecipe] = useState({uid: ''})
   const [imageURL, setImageURL] = useState('')
-  const [imageFile, setImageFile] = useState('')
+  const [imageFile] = useState('')
   const [error, setError] = useState([])
   const [dialog, setDialog] = useState(false)
   
@@ -172,11 +172,11 @@ export default function EditRecipe(props) {
 
       <div style={{display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: 'center'}}>
         <div>
-          <h1>edit recipe</h1>
+          <h1>Edit</h1>
         </div>
         
         <div>
-          <Button onClick={() => setDialog(true)} variant="contained" color="secondary">delete recipe</Button>
+          <Button onClick={() => setDialog(true)} variant="contained" color="secondary">delete</Button>
           <Dialog
             open={dialog}
             onClose={() => handleDelete(false)}
@@ -253,18 +253,6 @@ export default function EditRecipe(props) {
         </Form.Group>
 
         <Form.Group>
-          <Form.Label>Current Recipe Image</Form.Label>
-          <Dropdown>
-            <Dropdown.Toggle variant="outline-dark">
-              view image
-            </Dropdown.Toggle>
-            <Dropdown.Menu>
-              <img style={{maxWidth: "25vw"}} alt="" src={/https?:/.test(recipe.img_path) ? recipe.img_path : `https://firebasestorage.googleapis.com/v0/b/sylvias-cookbook.appspot.com/o/images%2F${recipe.img_path}?alt=media`} />
-            </Dropdown.Menu>
-          </Dropdown>
-        </Form.Group>
-
-        <Form.Group>
           <Form.Label>Recipe Image</Form.Label>
           <div className="d-flex flex-direction-row align-items-center justify-content-center">
             <div className="flex-grow-1">
@@ -297,7 +285,7 @@ export default function EditRecipe(props) {
 
         <div style={{alignSelf: 'center'}}>
           <Button className="mb-5 mt-2 mr-3" color="primary" variant="contained" type="submit">
-            update recipe
+            update
           </Button>
         </div>
         

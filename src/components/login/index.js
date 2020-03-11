@@ -1,9 +1,10 @@
 import React, { useState, useContext } from 'react'
 import { Form } from 'react-bootstrap'
 import firebase from '../../firebase'
-import { UserContext, FilterContext } from '../../filterContext'
+import { UserContext, FilterContext } from '../../context'
 import { useHistory, Link } from 'react-router-dom'
 import { Button } from '@material-ui/core'
+import { Paper } from '@material-ui/core'
 
 export default function Login(props) {
 
@@ -54,11 +55,14 @@ export default function Login(props) {
   return (
     <div style={{display: 'flex', flexDirection: 'row'}}>
 
+      <div className="content-gutter"></div>
       <div className="content-gutter-no-collapse"></div>
 
       <div className="form-view" style={{flexGrow: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center'}}>
 
-        <h1 className="text-center">login</h1>
+        <Paper className="login-container" elevation={5}>
+
+        <h1 className="text-center">Login</h1>
 
         {
           error
@@ -87,9 +91,12 @@ export default function Login(props) {
             No account? Make one <Link to="/signup">here</Link>
           </p>
         </div>
+        </Paper>
+      
       </div>
 
       <div className="content-gutter-no-collapse"></div>
+      <div className="content-gutter"></div>
 
     </div>
   )

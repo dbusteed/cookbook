@@ -2,7 +2,7 @@ import React, { useState, useContext } from 'react'
 import { Form } from 'react-bootstrap'
 import Login from '../login'
 import firebase from '../../firebase'
-import { UserContext } from '../../filterContext'
+import { UserContext } from '../../context'
 import { useHistory } from 'react-router-dom'
 import { Button } from '@material-ui/core'
 import categories from '../../other/categories'
@@ -116,10 +116,9 @@ export default function AddRecipe(props) {
 
       <div className="content-gutter-no-collapse"></div>
 
-
       <div className="form-view" style={{flexGrow: 1, display: 'flex', flexDirection: 'column'}}>
 
-      <h1 style={{textAlign: "center"}}>add recipe</h1>
+      <h1 style={{display: "flex", flexDirection: "row", justifyContent: "center", alignItems: 'center'}}>Add Recipe</h1>
 
       {
         error
@@ -205,7 +204,7 @@ export default function AddRecipe(props) {
 
         <div style={{alignSelf: 'center'}}>
           <Button className="mb-5 mt-2 mr-3" color="primary" variant="contained" type="submit">
-            add recipe
+            add
           </Button>
         </div>
 
