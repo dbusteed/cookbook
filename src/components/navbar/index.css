@@ -1,0 +1,7 @@
+.adv-search-container {
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+	height: 50vh;
+	margin-top: 5vh;
+}

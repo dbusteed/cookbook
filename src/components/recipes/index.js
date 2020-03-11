@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
 import RecipeCard from '../recipeCard'
 import { Spinner } from 'react-bootstrap'
-import { FilterContext, RecipeContext, UserContext } from '../../filterContext'
+import { FilterContext, RecipeContext, UserContext } from '../../context'
 
 export default function Recipes(props) {
 
@@ -12,8 +12,12 @@ export default function Recipes(props) {
 
   let renderRecipes = recipes
 
-  if (filter.search) {
-    renderRecipes = renderRecipes.filter(r => r.name.toLowerCase().search(filter.search) >= 0)
+  if (filter.search.title) {
+    renderRecipes = renderRecipes.filter(r => r.name.toLowerCase().search(filter.search.title) >= 0)
+  }
+
+  if (filter.search.ingredients) {
+    renderRecipes = renderRecipes.filter(r => r.ingredients.toLowerCase().search(filter.search.ingredients) >= 0)
   }
 
   if (filter.category) {
@@ -28,7 +32,9 @@ export default function Recipes(props) {
 
   const filterDetails = () => {
     let text = `Showing ${filter.userRecipes ? 'my' : 'all'} recipes`
-    text += filter.search ? ` with "${filter.search}"` : ''
+    text += filter.search.title ? ` with "${filter.search.title}"` : ''
+    // ingredient filter?
+    // tags?
     text += filter.category ? ` from ${filter.category} category` : ''
     return text
   }

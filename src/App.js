@@ -9,7 +9,7 @@ import Login from './components/login'
 import Signup from './components/signup'
 import AddRecipe from './components/addRecipe'
 import EditRecipe from './components/editRecipe'
-import { FilterContext, startingFilter, RecipeContext, UserContext } from './filterContext'
+import { FilterContext, startingFilter, RecipeContext, UserContext } from './context'
 import firebase from './firebase'
 
 export default function App() {
@@ -49,11 +49,11 @@ export default function App() {
         <RecipeContext.Provider value={{recipes, setRecipes}}>
           <UserContext.Provider value={{user, setUser}}>
 
-            <div style={{display: "flex", flexDirection: "column"}}>
+            <div style={{display: "flex", flexDirection: "column", height: "100vh" }}>
               
               <NavBar />
               
-              <div id="content" className="mt-4">
+              <div id="content" className="mt-5">
                 <div className="content-gutter"></div>
                 <div className="main-content">
                   <Switch>

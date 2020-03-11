@@ -4,7 +4,7 @@ import firebase from '../../firebase'
 import { Spinner } from 'react-bootstrap'
 import './index.css'
 import { Link } from 'react-router-dom'
-import { UserContext } from '../../filterContext'
+import { UserContext } from '../../context'
 import { Button } from '@material-ui/core'
 
 export default function RecipeDetail(props) {
@@ -19,6 +19,7 @@ export default function RecipeDetail(props) {
 
   const match = useRouteMatch('/recipe/:rid')
 
+  // TODO don't call? just read from context?
   useEffect(() => {
     const db = firebase.firestore() // handle bad id
     let docRef = db.collection('recipes').doc(match.params.rid)
