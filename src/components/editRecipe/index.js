@@ -266,8 +266,8 @@ export default function EditRecipe(props) {
               <Form.Label className="mx-2">OR</Form.Label>
             </div>
             <div className="d-flex flex-direction-row">
-                <label style={{backgroundColor: recipe.imageFile ? "#3f51b5" : "", color: recipe.imageFile ? "white" : ""}} className="MuiButtonBase-root MuiButton-root MuiButton-outlined">
-                  {recipe.imageFile ? recipe.imageFile.name : "upload"} 
+                <label style={{backgroundColor: imageFile ? "#3f51b5" : "", color: imageFile ? "white" : ""}} className="MuiButtonBase-root MuiButton-root MuiButton-outlined">
+                  {imageFile ? imageFile.name : "upload"} 
                   <input type="file" 
                     style={{display: 'none'}}
                     onChange={e => setImageFile(e.target.files[0])} />
