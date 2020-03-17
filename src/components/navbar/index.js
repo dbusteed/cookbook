@@ -176,7 +176,7 @@ export default function NavBar() {
               <TextField className="mb-2" value={advName} onChange={e => setAdvName(e.target.value)} label="search by name" variant="outlined" />
               <TextField className="mb-2" value={advIng} onChange={e => setAdvIng(e.target.value)} label="search by ingredient" variant="outlined" />
               <Button className="my-2" variant="outlined" onClick={() => {                
-                setFilter({...filter, search: {title: advName, ingredients: advIng}})
+                setFilter({...filter, search: {title: advName.toLowerCase(), ingredients: advIng.toLowerCase()}})
                 setDrawer(false)
                 setSearchDrawer(false)
               }}>search</Button>

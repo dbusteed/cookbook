@@ -15,7 +15,7 @@ export default function EditRecipe(props) {
   // state variables
   const [recipe, setRecipe] = useState({uid: ''})
   const [imageURL, setImageURL] = useState('')
-  const [imageFile] = useState('')
+  const [imageFile, setImageFile] = useState('')
   const [error, setError] = useState([])
   const [dialog, setDialog] = useState(false)
   
@@ -75,6 +75,7 @@ export default function EditRecipe(props) {
 
     if (formErrors.length > 0) {
       setError(formErrors)
+      window.scrollTo(0, 0)
       return
     }
 
@@ -203,7 +204,7 @@ export default function EditRecipe(props) {
 
       {
         error
-        ? <ul> {error.map((e,i) => (<li key={i}>{e}</li>))} </ul>
+        ? <ul> {error.map((e,i) => (<li key={i} style={{color: "red"}}>{e}</li>))} </ul>
         : null
       }
 
@@ -269,7 +270,7 @@ export default function EditRecipe(props) {
                   {recipe.imageFile ? recipe.imageFile.name : "upload"} 
                   <input type="file" 
                     style={{display: 'none'}}
-                    onChange={e => setRecipe({...recipe, imageFile: e.target.files[0]})} />
+                    onChange={e => setImageFile(e.target.files[0])} />
                 </label>
             </div>
           </div>
