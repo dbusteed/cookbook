@@ -53,7 +53,7 @@ export default function App() {
               
               <NavBar />
               
-              <div id="content" className="mt-5">
+              <div id="content">
                 <div className="content-gutter"></div>
                 <div className="main-content">
                   <Switch>

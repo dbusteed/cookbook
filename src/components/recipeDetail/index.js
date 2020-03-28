@@ -5,7 +5,14 @@ import { Spinner } from 'react-bootstrap'
 import './index.css'
 import { Link } from 'react-router-dom'
 import { UserContext } from '../../context'
-import { Button } from '@material-ui/core'
+
+// material stuff and icons
+import { Button, IconButton } from '@material-ui/core'
+import EditRoundedIcon from '@material-ui/icons/EditRounded'
+import WebRoundedIcon from '@material-ui/icons/WebRounded'
+import ViewAgendaRoundedIcon from '@material-ui/icons/ViewAgendaRounded'
+import ShareRoundedIcon from '@material-ui/icons/ShareRounded'
+
 
 export default function RecipeDetail(props) {
 
@@ -69,19 +76,33 @@ export default function RecipeDetail(props) {
                 </div>
 
                 <div style={{ textAlign: "center" }} className="recipe-detail-buttons">
+                  <IconButton>
+                    <ShareRoundedIcon style={{color: "black"}} fontSize={"large"} />
+                  </IconButton>
+                  
                   {
                     recipe.orig_link === "none" || recipe.orig_link === ""
-                      ? null
-                      : <Button href={recipe.orig_link} target="_none" variant="outlined" className="mr-2">visit original site</Button>
+                      ? null                      
+                      : <a href={recipe.orig_link} target="_blank">
+                          <IconButton>
+                            <WebRoundedIcon style={{color: "black"}} fontSize={"large"} />
+                          </IconButton>
+                        </a>
                   }
+                  
                   {
-                    user && user.uid === recipe.uid
+                    user && user.uid === recipe.uid                      
                       ? <Link to={`/edit/${recipe.id}`}>
-                          <Button variant="outlined" className="mr-2">edit recipe</Button>
+                          <IconButton>
+                            <EditRoundedIcon style={{color: "black"}} fontSize={"large"} />
+                          </IconButton>
                         </Link>
                       : null
                   }
-                  <Button id="toggle-button" variant="outlined" className="mr-2" onClick={toggleViewOrder}>toggle view order</Button>
+                  
+                  <IconButton id="toggle-button" onClick={toggleViewOrder}>
+                    <ViewAgendaRoundedIcon style={{color: "black"}} fontSize={"large"} />
+                  </IconButton>                  
                 </div>
               </div>
 

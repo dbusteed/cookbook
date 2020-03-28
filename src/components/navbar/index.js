@@ -228,7 +228,10 @@ export default function NavBar() {
             <div className="mr-4" style={{height: "100%"}}>
               <List>
                 <Link to={"/"} className="text-body text-decoration-none">
-                  <ListItem onClick={closeDrawer}>
+                  <ListItem onClick={() => {
+                    closeDrawer()
+                    resetFilter()
+                  }}>
                     <ListItemIcon><HomeRoundedIcon style={{color: "black"}} /></ListItemIcon>
                     <ListItemText primary={"Home"} />
                   </ListItem>

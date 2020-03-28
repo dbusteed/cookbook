@@ -79,10 +79,26 @@ export default function EditRecipe(props) {
       return
     }
 
+    // if no new image path as given
     if (!img_path) {
+  
+      // delete if old image in storage 
+      if(!(/https?:/.test(recipe.img_path))) {
+        let imageRef = storageRef.child(`images/${recipe.img_path}`)
+        imageRef.delete()
+        .then(() => {
+          console.log('recipe image deleted')
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+      } 
+    
+
       if(imageFile) {
         img_path = recipe.name.replace(/[^A-Za-z]/g, '').slice(0,10) + Date.now().toString() + '.' + imageFile.name.split('.').pop()
         
+        console.log('writing to storage')
         let imageRef = storageRef.child(`images/${img_path}`)
         imageRef.put(imageFile)
         .then(res => {
@@ -110,6 +126,9 @@ export default function EditRecipe(props) {
       modify_date: Date.now()
     }
 
+    console.log('new recipe', newRecipe)
+
+    // console.log('pushing to DB')
     db.collection('recipes').doc(recipe.id).set(newRecipe)
       .then(res => {
         console.log('great success')
