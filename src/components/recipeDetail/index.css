@@ -1,3 +1,8 @@
+/* .recipe-detail-container {
+  display: flex;
+  flex-direction: column;
+} */
+
 .recipe-header {
   display: flex;
   flex-direction: row;
@@ -24,7 +29,25 @@
   margin-left: 5vw;
 }
 
+.footer-button {
+  display: flex;
+  justify-content: flex-start;
+  margin: 10vh 0;
+}
+
+h1 {
+  font-size: 2rem;
+}
+
+h2 {
+  font-size: 1.5rem;
+}
+
 @media only screen and (max-width: 700px) {
+
+  .footer-button {
+    justify-content: center;
+  }
 
   .recipe-header {
     flex-direction: column;
@@ -35,7 +58,7 @@
   }
 
   .recipe-detail-buttons {
-    margin-top: 1rem;
+    margin-top: .2rem;
   }
 
   .recipe-body {

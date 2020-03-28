@@ -3,9 +3,10 @@ import { Form, Spinner } from 'react-bootstrap'
 import firebase from '../../firebase'
 import { UserContext } from '../../context'
 import { useRouteMatch, useHistory } from 'react-router-dom'
-import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@material-ui/core'
-import { Button } from '@material-ui/core'
 import categories from '../../other/categories'
+
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, IconButton } from '@material-ui/core'
+import DeleteRoundedIcon from '@material-ui/icons/DeleteRounded'
 
 export default function EditRecipe(props) {
   
@@ -192,11 +193,14 @@ export default function EditRecipe(props) {
 
       <div style={{display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: 'center'}}>
         <div>
-          <h1>Edit</h1>
+          <h1>Edit Recipe</h1>
         </div>
         
         <div>
           <Button onClick={() => setDialog(true)} variant="contained" color="secondary">delete</Button>
+          {/* <IconButton onClick={() => setDialog(true)}>
+            <DeleteRoundedIcon style={{color: "black"}} />
+          </IconButton> */}
           <Dialog
             open={dialog}
             onClose={() => handleDelete(false)}

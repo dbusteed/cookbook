@@ -5,12 +5,13 @@ import { Spinner } from 'react-bootstrap'
 import './index.css'
 import { Link } from 'react-router-dom'
 import { UserContext } from '../../context'
+import { CopyToClipboard } from 'react-copy-to-clipboard'
 
 // material stuff and icons
-import { Button, IconButton } from '@material-ui/core'
+import { Button, IconButton, Snackbar } from '@material-ui/core'
+import Alert from '@material-ui/lab/Alert'
 import EditRoundedIcon from '@material-ui/icons/EditRounded'
-import WebRoundedIcon from '@material-ui/icons/WebRounded'
-import ViewAgendaRoundedIcon from '@material-ui/icons/ViewAgendaRounded'
+import ViewDayRoundedIcon from '@material-ui/icons/ViewDayRounded'
 import ShareRoundedIcon from '@material-ui/icons/ShareRounded'
 
 
@@ -23,7 +24,9 @@ export default function RecipeDetail(props) {
   const [recipe, setRecipe] = useState(null)
   const [columnDirection, setColumnDirection] = useState('column')
   const [bodyDirection, setBodyDirection] = useState(window.innerWidth > 600 ? 'row' : columnDirection)
+  const [snackbar, setSnackbar] = useState(false)
 
+  // other hooks
   const match = useRouteMatch('/recipe/:rid')
 
   // TODO don't call? just read from context?
@@ -68,7 +71,7 @@ export default function RecipeDetail(props) {
           ?
 
           <div>
-            <div>
+            <div className="recipe-detail-container">
 
               <div className="recipe-header">
                 <div>
@@ -76,33 +79,27 @@ export default function RecipeDetail(props) {
                 </div>
 
                 <div style={{ textAlign: "center" }} className="recipe-detail-buttons">
-                  <IconButton>
-                    <ShareRoundedIcon style={{color: "black"}} fontSize={"large"} />
-                  </IconButton>
+
+                  <IconButton id="toggle-button" onClick={toggleViewOrder}>
+                    <ViewDayRoundedIcon style={{color: "black"}} fontSize={"small"} />
+                  </IconButton>   
                   
-                  {
-                    recipe.orig_link === "none" || recipe.orig_link === ""
-                      ? null                      
-                      : <a href={recipe.orig_link} target="_blank">
-                          <IconButton>
-                            <WebRoundedIcon style={{color: "black"}} fontSize={"large"} />
-                          </IconButton>
-                        </a>
-                  }
+                  <CopyToClipboard text={window.location.href}>
+                    <IconButton onClick={() => {setSnackbar(true)}}>
+                      <ShareRoundedIcon style={{color: "black"}} fontSize={"small"} />
+                    </IconButton>
+                  </CopyToClipboard>            
                   
                   {
                     user && user.uid === recipe.uid                      
                       ? <Link to={`/edit/${recipe.id}`}>
                           <IconButton>
-                            <EditRoundedIcon style={{color: "black"}} fontSize={"large"} />
+                            <EditRoundedIcon style={{color: "black"}} fontSize={"small"} />
                           </IconButton>
                         </Link>
                       : null
                   }
                   
-                  <IconButton id="toggle-button" onClick={toggleViewOrder}>
-                    <ViewAgendaRoundedIcon style={{color: "black"}} fontSize={"large"} />
-                  </IconButton>                  
                 </div>
               </div>
 
@@ -140,7 +137,7 @@ export default function RecipeDetail(props) {
                 ?
                 
                 <div className="other-recipe-body mt-3">
-                  <h3>Notes</h3>
+                  <h2>Notes</h2>
                   <ul>
                     {
                       recipe.notes.split("<SEP>").map((note, idx) => (
@@ -153,7 +150,26 @@ export default function RecipeDetail(props) {
                 : null
               }
 
+              { recipe.orig_link === "none" || recipe.orig_link === ""
+                ? null                      
+                : <div className="footer-button">
+                    {/* <a size="small" href={recipe.orig_link} variant="outlined">visit original site</a> */}
+                    <Button size="small" href={recipe.orig_link} variant="outlined">visit original site</Button>
+                  </div>
+              }
+
             </div>
+
+            <Snackbar
+              variant={"primary"}
+              anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+              open={snackbar}
+              onClose={() => setSnackbar(false)}
+              autoHideDuration={3000}
+            >
+              <Alert elevation={6} variant="filled" severity="info">Copied to clipboard</Alert>
+            </Snackbar>
+
           </div>
 
           :
