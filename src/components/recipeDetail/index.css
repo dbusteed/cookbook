@@ -29,8 +29,9 @@
   margin-left: 5vw;
 }
 
-.footer-button {
+.recipe-footer {
   display: flex;
+  flex-direction: column;
   justify-content: flex-start;
   margin: 10vh 0;
 }
@@ -43,9 +44,20 @@ h2 {
   font-size: 1.5rem;
 }
 
+.recipe-header h1 {
+  margin: 0 1rem 0 0;
+}
+
+.recipe-header-left {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+
 @media only screen and (max-width: 700px) {
 
-  .footer-button {
+  .recipe-footer {
     justify-content: center;
   }
 

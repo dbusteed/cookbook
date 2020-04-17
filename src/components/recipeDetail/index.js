@@ -8,7 +8,7 @@ import { UserContext } from '../../context'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
 
 // material stuff and icons
-import { Button, IconButton, Snackbar } from '@material-ui/core'
+import { Button, IconButton, Snackbar, Chip } from '@material-ui/core'
 import Alert from '@material-ui/lab/Alert'
 import EditRoundedIcon from '@material-ui/icons/EditRounded'
 import ViewDayRoundedIcon from '@material-ui/icons/ViewDayRounded'
@@ -74,8 +74,8 @@ export default function RecipeDetail(props) {
             <div className="recipe-detail-container">
 
               <div className="recipe-header">
-                <div>
-                  <h1 style={{ textAlign: "center" }} className="m-0">{recipe.name}</h1>
+                <div className="recipe-header-left">
+                  <h1 style={{ textAlign: "center" }}>{recipe.name}</h1>
                 </div>
 
                 <div style={{ textAlign: "center" }} className="recipe-detail-buttons">
@@ -152,9 +152,20 @@ export default function RecipeDetail(props) {
 
               { recipe.orig_link === "none" || recipe.orig_link === ""
                 ? null                      
-                : <div className="footer-button">
-                    {/* <a size="small" href={recipe.orig_link} variant="outlined">visit original site</a> */}
-                    <Button size="small" href={recipe.orig_link} variant="outlined">visit original site</Button>
+                : <div className="recipe-footer">
+                    <div className="d-flex">                      
+                      {
+                        recipe.tags && 
+                        recipe.tags.split("<SEP>").map(tag => (
+                          <div className="chip-container" key={tag}>
+                            <Chip key={tag} variant="outlined" label={tag} />
+                          </div>
+                        ))
+                      }
+                    </div>
+                    <div>
+                      <Button size="small" href={recipe.orig_link} variant="outlined">visit original site</Button>                    
+                    </div>
                   </div>
               }
 

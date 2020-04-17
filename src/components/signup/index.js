@@ -78,7 +78,6 @@ export default function Signup(props) {
     <div style={{display: 'flex', flexDirection: 'row'}}>
 
       <div className="content-gutter"></div>
-      <div className="content-gutter-no-collapse"></div>
 
       <div className="form-view" style={{flexGrow: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center'}}>
 
@@ -128,7 +127,6 @@ export default function Signup(props) {
 
       </div>
 
-      <div className="content-gutter-no-collapse"></div>
       <div className="content-gutter"></div>
       
     </div>
