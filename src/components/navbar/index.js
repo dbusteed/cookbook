@@ -3,8 +3,7 @@ import './index.css'
 import { Form, FormControl } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 import firebase from '../../firebase'
-import { FilterContext, UserContext, startingFilter } from '../../context'
-import categories from '../../other/categories'
+import { FilterContext, UserContext, startingFilter, MetaContext } from '../../context'
 
 // material stuff
 import { Drawer, List, ListItem, ListItemText, ListItemIcon, Collapse, TextField, Button, Paper } from '@material-ui/core'
@@ -30,17 +29,24 @@ export default function NavBar() {
   const [searchDrawer, setSearchDrawer] = useState(false)
   const [drawerFilter, setDrawerFilter] = useState(false)
   const [filterMenu, setFilterMenu] = useState(null)
+  const [categories, setCategories] = useState([])
   
   const {filter, setFilter} = useContext(FilterContext)
   const {user, setUser} = useContext(UserContext)
+  const {meta} = useContext(MetaContext)
+
+  useEffect(() => {
+
+    let cats = meta.categories.split('<SEP>')
+    setCategories(cats)
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [meta])
 
   useEffect(() => {
     firebase.auth().onAuthStateChanged(user => {
       if (user) {
-        console.log('yes user!')
         setFilter({...filter, userRecipes: true})
-      } else {
-        console.log('no user!')
       }
     })
     
@@ -228,7 +234,10 @@ export default function NavBar() {
             <div className="mr-4" style={{height: "100%"}}>
               <List>
                 <Link to={"/"} className="text-body text-decoration-none">
-                  <ListItem onClick={closeDrawer}>
+                  <ListItem onClick={() => {
+                    closeDrawer()
+                    resetFilter()
+                  }}>
                     <ListItemIcon><HomeRoundedIcon style={{color: "black"}} /></ListItemIcon>
                     <ListItemText primary={"Home"} />
                   </ListItem>

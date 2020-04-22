@@ -9,13 +9,17 @@ import Login from './components/login'
 import Signup from './components/signup'
 import AddRecipe from './components/addRecipe'
 import EditRecipe from './components/editRecipe'
-import { FilterContext, startingFilter, RecipeContext, UserContext } from './context'
+import { FilterContext, startingFilter, RecipeContext, UserContext, MetaContext } from './context'
 import firebase from './firebase'
 
 export default function App() {
 
   const [filter, setFilter] = useState(startingFilter)
   const [recipes, setRecipes] = useState([])
+  const [meta, setMeta] = useState({
+    'tags': '',
+    'categories': ''
+  })
   const [user, setUser] = useState(null)
 
   useEffect(() => {
@@ -23,10 +27,18 @@ export default function App() {
     let recRef = db.collection('recipes')
     let docs = []
 
-    // console.log('grabbing recipes!')
+    let metaRef = db.collection('meta').doc('meta')
+    metaRef.get().then(doc => {
+      setMeta({
+        'categories': doc.data().categories,
+        'tags': doc.data().tags
+      })
+    })
+
+    console.log('GRABBING RECIPES!')
     recRef.get().then(query => {
       query.forEach(doc => {
-        docs.push({...doc.data(), id: doc.id})
+        docs.push({...doc.data(), id: doc.id}) 
       })
 
       docs.sort((a,b) => b.create_date - a.create_date)
@@ -48,28 +60,30 @@ export default function App() {
       <FilterContext.Provider value={{filter, setFilter}}>
         <RecipeContext.Provider value={{recipes, setRecipes}}>
           <UserContext.Provider value={{user, setUser}}>
+            <MetaContext.Provider value={{meta, setMeta}}>
 
-            <div style={{display: "flex", flexDirection: "column", height: "100vh" }}>
-              
-              <NavBar />
-              
-              <div id="content" className="mt-5">
-                <div className="content-gutter"></div>
-                <div className="main-content">
-                  <Switch>
-                    <Route path="/recipe" component={RecipeDetail} />
-                    <Route path="/login" component={Login} />
-                    <Route path="/signup" component={Signup} />
-                    <Route path="/add" component={AddRecipe} />
-                    <Route path="/edit" component={EditRecipe} />
-                    <Route path="/" component={Recipes}/>
-                  </Switch>
+              <div style={{display: "flex", flexDirection: "column", height: "100vh" }}>
+                
+                <NavBar />
+                
+                <div id="content">
+                  <div className="content-gutter"></div>
+                  <div className="main-content">
+                    <Switch>
+                      <Route path="/recipe" component={RecipeDetail} />
+                      <Route path="/login" component={Login} />
+                      <Route path="/signup" component={Signup} />
+                      <Route path="/add" component={AddRecipe} />
+                      <Route path="/edit" component={EditRecipe} />
+                      <Route path="/" component={Recipes}/>
+                    </Switch>
+                  </div>
+                  <div className="content-gutter"></div>
                 </div>
-                <div className="content-gutter"></div>
+              
               </div>
-            
-            </div>
 
+            </MetaContext.Provider>
           </UserContext.Provider>
         </RecipeContext.Provider>
       </FilterContext.Provider>

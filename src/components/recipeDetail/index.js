@@ -5,7 +5,15 @@ import { Spinner } from 'react-bootstrap'
 import './index.css'
 import { Link } from 'react-router-dom'
 import { UserContext } from '../../context'
-import { Button } from '@material-ui/core'
+import { CopyToClipboard } from 'react-copy-to-clipboard'
+
+// material stuff and icons
+import { Button, IconButton, Snackbar, Chip } from '@material-ui/core'
+import Alert from '@material-ui/lab/Alert'
+import EditRoundedIcon from '@material-ui/icons/EditRounded'
+import ViewDayRoundedIcon from '@material-ui/icons/ViewDayRounded'
+import ShareRoundedIcon from '@material-ui/icons/ShareRounded'
+
 
 export default function RecipeDetail(props) {
 
@@ -16,7 +24,9 @@ export default function RecipeDetail(props) {
   const [recipe, setRecipe] = useState(null)
   const [columnDirection, setColumnDirection] = useState('column')
   const [bodyDirection, setBodyDirection] = useState(window.innerWidth > 600 ? 'row' : columnDirection)
+  const [snackbar, setSnackbar] = useState(false)
 
+  // other hooks
   const match = useRouteMatch('/recipe/:rid')
 
   // TODO don't call? just read from context?
@@ -61,27 +71,35 @@ export default function RecipeDetail(props) {
           ?
 
           <div>
-            <div>
+            <div className="recipe-detail-container">
 
               <div className="recipe-header">
-                <div>
-                  <h1 style={{ textAlign: "center" }} className="m-0">{recipe.name}</h1>
+                <div className="recipe-header-left">
+                  <h1 style={{ textAlign: "center" }}>{recipe.name}</h1>
                 </div>
 
                 <div style={{ textAlign: "center" }} className="recipe-detail-buttons">
+
+                  <IconButton id="toggle-button" onClick={toggleViewOrder}>
+                    <ViewDayRoundedIcon style={{color: "black"}} fontSize={"small"} />
+                  </IconButton>   
+                  
+                  <CopyToClipboard text={window.location.href}>
+                    <IconButton onClick={() => {setSnackbar(true)}}>
+                      <ShareRoundedIcon style={{color: "black"}} fontSize={"small"} />
+                    </IconButton>
+                  </CopyToClipboard>            
+                  
                   {
-                    recipe.orig_link === "none" || recipe.orig_link === ""
-                      ? null
-                      : <Button href={recipe.orig_link} target="_none" variant="outlined" className="mr-2">visit original site</Button>
-                  }
-                  {
-                    user && user.uid === recipe.uid
+                    user && user.uid === recipe.uid                      
                       ? <Link to={`/edit/${recipe.id}`}>
-                          <Button variant="outlined" className="mr-2">edit recipe</Button>
+                          <IconButton>
+                            <EditRoundedIcon style={{color: "black"}} fontSize={"small"} />
+                          </IconButton>
                         </Link>
                       : null
                   }
-                  <Button id="toggle-button" variant="outlined" className="mr-2" onClick={toggleViewOrder}>toggle view order</Button>
+                  
                 </div>
               </div>
 
@@ -119,7 +137,7 @@ export default function RecipeDetail(props) {
                 ?
                 
                 <div className="other-recipe-body mt-3">
-                  <h3>Notes</h3>
+                  <h2>Notes</h2>
                   <ul>
                     {
                       recipe.notes.split("<SEP>").map((note, idx) => (
@@ -132,7 +150,48 @@ export default function RecipeDetail(props) {
                 : null
               }
 
+
+              {/* <hr /> */}
+
+              <div className="recipe-footer">
+                <div className="recipe-footer-tags">                      
+                  {
+                    recipe.tags &&
+                    
+                    <>
+                    {
+                      recipe.tags.split("<SEP>").map(tag => (
+                        <div className="chip-container" key={tag}>
+                          <Chip key={tag} variant="outlined" label={tag} />
+                        </div>
+                      ))
+                    }
+                    </>
+                  }
+                </div>
+                <div className="recipe-footer-link">
+                  {
+                    recipe.orig_link === "none" || recipe.orig_link === ""
+                    ? null
+                    : <div>                        
+                        <Button variant="contained" size="small" href={recipe.orig_link} disableElevation>visit original site</Button>                    
+                      </div>
+                  }
+                </div>
+              </div>
+          
             </div>
+
+            <Snackbar
+              variant={"primary"}
+              anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+              open={snackbar}
+              onClose={() => setSnackbar(false)}
+              autoHideDuration={3000}
+            >
+              <Alert elevation={6} variant="filled" severity="info">Copied to clipboard</Alert>
+            </Snackbar>
+
           </div>
 
           :

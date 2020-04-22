@@ -1,23 +1,29 @@
 import React, { useState, useContext, useEffect } from 'react'
-import { Form, Spinner } from 'react-bootstrap'
+import { Form, Spinner, InputGroup } from 'react-bootstrap'
 import firebase from '../../firebase'
-import { UserContext } from '../../context'
+import { UserContext, MetaContext } from '../../context'
 import { useRouteMatch, useHistory } from 'react-router-dom'
-import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@material-ui/core'
-import { Button } from '@material-ui/core'
-import categories from '../../other/categories'
+// import categories from '../../other/categories'
+
+import { Chip, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button } from '@material-ui/core'
+// import DeleteRoundedIcon from '@material-ui/icons/DeleteRounded'
 
 export default function EditRecipe(props) {
   
   // context variables
   const { user } = useContext(UserContext)
+  const { meta, setMeta } = useContext(MetaContext)
 
   // state variables
-  const [recipe, setRecipe] = useState({uid: ''})
+  const [recipe, setRecipe] = useState({id: ''})
   const [imageURL, setImageURL] = useState('')
   const [imageFile, setImageFile] = useState('')
   const [error, setError] = useState([])
   const [dialog, setDialog] = useState(false)
+  const [tag, setTag] = useState('')
+  const [allTags, setAllTags] = useState({})
+  const [trigger, setTrigger] = useState(0)
+  const [categories, setCategories] = useState([])
   
   // other hooks
   const match = useRouteMatch('/edit/:rid')
@@ -26,25 +32,84 @@ export default function EditRecipe(props) {
   // firebase connections
   const storageRef = firebase.storage().ref()
   const db = firebase.firestore()
+
+  // get categories from meta
+  useEffect(() => {
+
+    let cats = meta.categories.split('<SEP>')
+    setCategories(cats)
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [meta])
+
+  useEffect(() => {
+    console.log('meta useEffect')
+
+    let tags = {}
+
+    if (trigger !== recipe.id) {
+      console.log('grabbing the data')
+
+      if (recipe.id) {
+
+        console.log('got the recipe id!')
+
+        if (recipe.tags) {
+          tags = recipe.tags.split('<SEP>').reduce((res, tag) => {
+            res[tag] = true
+            return res
+          }, {})
+        }
+
+        console.log('meta', meta)
+        
+        meta.tags.split('<SEP>').forEach(tag => {
+          if (!tags[tag]) {
+            tags[tag] = false
+          }
+        })
+       
+        setTrigger(recipe.id)
+      }  
+
+    } else {
+ 
+      meta.tags.split('<SEP>').forEach(tag => {
+        if (allTags[tag]) {
+          tags[tag] = allTags[tag]
+        } else {
+          tags[tag] = false
+        }
+      })
+      
+    }
+
+    console.log(tags)
+
+    setAllTags(tags)
+    
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [meta, recipe.id])
   
+  // get the recipe
   useEffect(() => {
     let docRef = db.collection('recipes').doc(match.params.rid)
 
-    docRef.get().then(doc => {
-      setRecipe(
-        {
-          ...doc.data(),
-          id: doc.id,
-          ingredients: doc.data().ingredients.replace(/<SEP>/g, "\n"),
-          directions: doc.data().directions.replace(/<SEP>/g, "\n"),
-          notes: doc.data().notes.replace(/<SEP>/g, "\n")
+    docRef.get()
+      .then(doc => {
+        setRecipe({
+            ...doc.data(),
+            id: doc.id,
+            ingredients: doc.data().ingredients.replace(/<SEP>/g, "\n"),
+            directions: doc.data().directions.replace(/<SEP>/g, "\n"),
+            notes: doc.data().notes.replace(/<SEP>/g, "\n")
+          })
         }
       )
-    })
-    .catch(err => {
-      console.log(err)
-    })
-
+      .catch(err => {
+        console.log(err)
+      })
+      
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -53,6 +118,9 @@ export default function EditRecipe(props) {
     e.preventDefault()
     
     // TODO better  validation checking crap
+
+    
+    
 
     let formErrors = []
     let img_path = ''
@@ -79,10 +147,26 @@ export default function EditRecipe(props) {
       return
     }
 
+    // if no new image path as given
     if (!img_path) {
+  
+      // delete if old image in storage 
+      if(!(/https?:/.test(recipe.img_path))) {
+        let imageRef = storageRef.child(`images/${recipe.img_path}`)
+        imageRef.delete()
+        .then(() => {
+          console.log('recipe image deleted')
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+      } 
+    
+
       if(imageFile) {
         img_path = recipe.name.replace(/[^A-Za-z]/g, '').slice(0,10) + Date.now().toString() + '.' + imageFile.name.split('.').pop()
         
+        console.log('writing to storage')
         let imageRef = storageRef.child(`images/${img_path}`)
         imageRef.put(imageFile)
         .then(res => {
@@ -97,11 +181,14 @@ export default function EditRecipe(props) {
       }
     }
 
+    let tags = Object.entries(allTags).filter(([k,v]) => v).map(([k,v]) => k).join('<SEP>')
+
     let newRecipe = {
       name: recipe.name,
       ingredients: recipe.ingredients.replace(/\n/g, "<SEP>"),
       directions: recipe.directions.replace(/\n/g, "<SEP>"),
       category: recipe.category,
+      tags: tags,
       notes: recipe.notes.replace(/\n/g, "<SEP>"),
       img_path: img_path,
       orig_link: recipe.orig_link,
@@ -110,6 +197,9 @@ export default function EditRecipe(props) {
       modify_date: Date.now()
     }
 
+    console.log('new recipe', newRecipe)
+
+    // console.log('pushing to DB')
     db.collection('recipes').doc(recipe.id).set(newRecipe)
       .then(res => {
         console.log('great success')
@@ -152,8 +242,6 @@ export default function EditRecipe(props) {
     setDialog(false)
   }
 
-  // useEffect(() => {
-  //   console.log(user)
   if (!user || user.uid !== recipe.uid) {
     return (
       <Spinner animation="border" role="status">
@@ -161,23 +249,24 @@ export default function EditRecipe(props) {
       </Spinner>
     )
   }
-  // }, [])
 
   return (
     <div style={{display: 'flex', flexDirection: 'row'}}>
 
-      <div className="content-gutter-no-collapse"></div>
+      <div className="content-gutter"></div>
 
-
-      <div className="form-view" style={{flexGrow: 1, display: 'flex', flexDirection: 'column'}}>
+      <div className="form-view">
 
       <div style={{display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: 'center'}}>
         <div>
-          <h1>Edit</h1>
+          <h1>Edit Recipe</h1>
         </div>
         
         <div>
           <Button onClick={() => setDialog(true)} variant="contained" color="secondary">delete</Button>
+          {/* <IconButton onClick={() => setDialog(true)}>
+            <DeleteRoundedIcon style={{color: "black"}} />
+          </IconButton> */}
           <Dialog
             open={dialog}
             onClose={() => handleDelete(false)}
@@ -245,6 +334,62 @@ export default function EditRecipe(props) {
           </Form.Control>
         </Form.Group>
 
+        <Form.Group controlId="tags">
+          <Form.Label>Tags (optional)</Form.Label>
+          <div className="tags-outer-container">
+            <div className="tags-container">
+              {
+                Object.entries(allTags)
+                  .map(([tag, checked]) => (
+                    <div className="chip-container" key={tag}>
+                      <Chip variant={checked ? "default" : "outlined"} label={tag} onClick={() => {
+                        setAllTags({...allTags, [tag]: !checked})
+                      }} />
+                    </div>
+                  ))
+              }
+            </div>
+            <div className="add-tag-container">
+              <InputGroup>
+                <Form.Control type="text" 
+                  value={tag}
+                  onChange={e => setTag(e.target.value)}
+                />
+                <InputGroup.Append>
+                  <Button variant="outlined" onClick={e => {
+
+                    let tagLower = tag.toLowerCase()
+                    
+                    // set allTags, so that the new tag is already selected
+                    setAllTags({...allTags, [tagLower]: true})
+                    
+                    let newTags = ''
+                    if (meta.tags === '') {
+                      newTags = tagLower
+                    } else {
+                      newTags = meta.tags + `<SEP>${tagLower}`
+                    }
+
+                    // set the Meta context, so that subsequent recipes show the new tag
+                    setMeta({...meta, tags: newTags})
+
+                    // update the DB, so that the new tag is saved
+                    db.collection('meta').doc('meta').set({
+                      categories: meta.categories,
+                      tags: newTags
+                    })
+
+                    // clear the input
+                    setTag('')
+                  }}>
+                    add tag
+                  </Button>
+                </InputGroup.Append>
+              </InputGroup>
+            </div>
+          </div>
+        </Form.Group>
+
         <Form.Group controlId="notes">
           <Form.Label>Notes (optional)</Form.Label>
           <Form.Control as="textarea"
@@ -294,7 +439,7 @@ export default function EditRecipe(props) {
 
     </div>
 
-    <div className="content-gutter-no-collapse"></div>
+    <div className="content-gutter"></div>
     </div>
   )
 }

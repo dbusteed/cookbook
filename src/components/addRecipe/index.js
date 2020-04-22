@@ -1,13 +1,17 @@
-import React, { useState, useContext } from 'react'
-import { Form } from 'react-bootstrap'
+import React, { useState, useContext, useEffect } from 'react'
+import './index.css'
+import { Form, InputGroup } from 'react-bootstrap'
 import Login from '../login'
 import firebase from '../../firebase'
-import { UserContext } from '../../context'
+import { UserContext, MetaContext } from '../../context'
 import { useHistory } from 'react-router-dom'
-import { Button } from '@material-ui/core'
-import categories from '../../other/categories'
+import { Button, Chip } from '@material-ui/core'
 
 export default function AddRecipe(props) {
+  
+  // context variables
+  const { user } = useContext(UserContext)
+  const { meta, setMeta } = useContext(MetaContext)
   
   // state variables
   const [recipe, setRecipe] = useState({
@@ -20,23 +24,40 @@ export default function AddRecipe(props) {
     imageFile: '',
     orig_link: ''
   })
+  const [tag, setTag] = useState('')
   const [error, setError] = useState([])
+  const [allTags, setAllTags] = useState({})
+  const [categories, setCategories] = useState([])
 
-  // context variables
-  const { user } = useContext(UserContext)
-
-  // other hooks
   const history = useHistory()
 
   // firebase connections
   const storageRef = firebase.storage().ref()
   const db = firebase.firestore()
 
+  useEffect(() => {
+    // initialize categories
+    let cats = meta.categories.split('<SEP>')
+    setCategories(cats)
+
+    let tags = meta.tags.split('<SEP>').reduce((res, tag) => {
+      if (allTags[tag]) {
+        res[tag] = allTags[tag]
+      } else {
+        res[tag] = false
+      }
+      return res
+    }, {})
+
+    setAllTags(tags)
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [meta])
+
   const handleSubmit = (e) => {
     e.preventDefault()
     
     // TODO better  validation checking crap
-
     let formErrors = []
 
     if (recipe.name === '') {
@@ -78,6 +99,8 @@ export default function AddRecipe(props) {
       img_path = recipe.imageURL
     }
 
+    let tags = Object.entries(allTags).filter(([k,v]) => v).map(([k,v]) => k).join('<SEP>')
+
     let timestamp = Date.now()
 
     let newRecipe = {
@@ -85,6 +108,7 @@ export default function AddRecipe(props) {
       ingredients: recipe.ingredients.replace(/\n/g, "<SEP>"),
       directions: recipe.directions.replace(/\n/g, "<SEP>"),
       category: recipe.category,
+      tags: tags,
       notes: recipe.notes.replace(/\n/g, "<SEP>"),
       img_path: img_path,
       orig_link: recipe.orig_link,
@@ -101,7 +125,7 @@ export default function AddRecipe(props) {
         history.push('/') // need to refresh page context?
       })
       .catch(err => {
-        console.log('failure')
+        console.log('failure', err)
       })
 
       // TODO loading or some sorta feedback?
@@ -114,9 +138,9 @@ export default function AddRecipe(props) {
   return (
     <div style={{display: 'flex', flexDirection: 'row'}}>
 
-      <div className="content-gutter-no-collapse"></div>
+      <div className="content-gutter"></div>
 
-      <div className="form-view" style={{flexGrow: 1, display: 'flex', flexDirection: 'column'}}>
+      <div className="form-view">
 
       <h1 style={{display: "flex", flexDirection: "row", justifyContent: "center", alignItems: 'center'}}>Add Recipe</h1>
 
@@ -164,6 +188,62 @@ export default function AddRecipe(props) {
           </Form.Control>
         </Form.Group>
 
+        <Form.Group controlId="tags">
+          <Form.Label>Tags (optional)</Form.Label>
+          <div className="tags-outer-container">
+            <div className="tags-container">
+              {
+                Object.entries(allTags)
+                  .map(([tag, checked]) => (
+                    <div className="chip-container" key={tag}>
+                      <Chip variant={checked ? "default" : "outlined"} label={tag} onClick={() => {
+                        setAllTags({...allTags, [tag]: !checked})
+                      }} />
+                    </div>
+                  ))
+              }
+            </div>
+            <div className="add-tag-container">
+              <InputGroup>
+                <Form.Control type="text" 
+                  value={tag}
+                  onChange={e => setTag(e.target.value)}
+                />
+                <InputGroup.Append>
+                  <Button variant="outlined" onClick={e => {
+                    
+                    let tagLower = tag.toLowerCase()
+                    
+                    // set allTags, so that the new tag is already selected
+                    setAllTags({...allTags, [tagLower]: true})
+                    
+                    let newTags = ''
+                    if (meta.tags === '') {
+                      newTags = tagLower
+                    } else {
+                      newTags = meta.tags + `<SEP>${tagLower}`
+                    }
+
+                    // set the Meta context, so that subsequent recipes show the new tag
+                    setMeta({...meta, tags: newTags})
+
+                    // update the DB, so that the new tag is saved
+                    db.collection('meta').doc('meta').set({
+                      categories: meta.categories,
+                      tags: newTags
+                    })
+
+                    // clear the input
+                    setTag('')
+                  }}>
+                    add tag
+                  </Button>
+                </InputGroup.Append>
+              </InputGroup>
+            </div>
+          </div>
+        </Form.Group>
+
         <Form.Group controlId="notes">
           <Form.Label>Notes (optional)</Form.Label>
           <Form.Control as="textarea"
@@ -203,7 +283,7 @@ export default function AddRecipe(props) {
         </Form.Group>
 
         <div style={{alignSelf: 'center'}}>
-          <Button className="mb-5 mt-2 mr-3" color="primary" variant="contained" type="submit">
+          <Button className="mb-5 mt-2" color="primary" variant="contained" type="submit">
             add
           </Button>
         </div>
@@ -212,7 +292,7 @@ export default function AddRecipe(props) {
 
     </div>
 
-    <div className="content-gutter-no-collapse"></div>
+    <div className="content-gutter"></div>
     </div>
   )
 }

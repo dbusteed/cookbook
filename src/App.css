@@ -37,6 +37,7 @@
 #content {
   display: flex;
   flex-direction: row;
+  margin-top: 3rem;
 }
 
 .content-gutter {
@@ -71,7 +72,39 @@
   margin-bottom: 5vh;
 } 
 
+.form-view {
+  display: 'flex';
+  flex-direction: 'column';
+  flex: 2 0 0;
+}
+
+.tags-outer-container {
+	display: flex;
+	justify-content: space-between;
+}
+
+.tags-container {
+	display: flex;
+	flex-wrap: wrap;
+	flex: 5 0 0;
+	margin-right: 1rem;
+}
+
+.add-tag-container {
+	display: flex;
+	flex-direction: column;
+	flex: 4 0 0 ;
+}
+
+.chip-container {
+	margin: .12rem;
+}
+
 @media only screen and (max-width: 700px) {
+  #content {
+    margin-top: .5rem;
+  }
+
   .full-navbar {
     display: none;
   }
@@ -95,5 +128,15 @@
   .login-container {
     margin-top: 0;
   }
+
 }
 
+@media only screen and (max-width: 1200px) {
+  .tags-outer-container {
+    flex-direction: column;
+  }
+
+  .add-tag-container {
+    margin-top: .5rem;
+  }
+}
