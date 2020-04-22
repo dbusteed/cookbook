@@ -6,7 +6,6 @@ import firebase from '../../firebase'
 import { UserContext, MetaContext } from '../../context'
 import { useHistory } from 'react-router-dom'
 import { Button, Chip } from '@material-ui/core'
-import categories from '../../other/categories'
 
 export default function AddRecipe(props) {
   
@@ -28,6 +27,7 @@ export default function AddRecipe(props) {
   const [tag, setTag] = useState('')
   const [error, setError] = useState([])
   const [allTags, setAllTags] = useState({})
+  const [categories, setCategories] = useState([])
 
   const history = useHistory()
 
@@ -36,6 +36,10 @@ export default function AddRecipe(props) {
   const db = firebase.firestore()
 
   useEffect(() => {
+    // initialize categories
+    let cats = meta.categories.split('<SEP>')
+    setCategories(cats)
+
     let tags = meta.tags.split('<SEP>').reduce((res, tag) => {
       if (allTags[tag]) {
         res[tag] = allTags[tag]
@@ -207,16 +211,17 @@ export default function AddRecipe(props) {
                 />
                 <InputGroup.Append>
                   <Button variant="outlined" onClick={e => {
-                    console.log(meta.tags)
+                    
+                    let tagLower = tag.toLowerCase()
                     
                     // set allTags, so that the new tag is already selected
-                    setAllTags({...allTags, [tag]: true})
+                    setAllTags({...allTags, [tagLower]: true})
                     
                     let newTags = ''
                     if (meta.tags === '') {
-                      newTags = tag
+                      newTags = tagLower
                     } else {
-                      newTags = meta.tags + `<SEP>${tag}`
+                      newTags = meta.tags + `<SEP>${tagLower}`
                     }
 
                     // set the Meta context, so that subsequent recipes show the new tag
@@ -224,7 +229,7 @@ export default function AddRecipe(props) {
 
                     // update the DB, so that the new tag is saved
                     db.collection('meta').doc('meta').set({
-                      catagories: meta.categories,
+                      categories: meta.categories,
                       tags: newTags
                     })
 
@@ -278,9 +283,7 @@ export default function AddRecipe(props) {
         </Form.Group>
 
         <div style={{alignSelf: 'center'}}>
-          <Button className="mb-5 mt-2 mr-3" color="primary" variant="contained" 
-            onClick={() => console.log(meta)}>
-          {/* <Button className="mb-5 mt-2 mr-3" color="primary" variant="contained" type="submit"> */}
+          <Button className="mb-5 mt-2" color="primary" variant="contained" type="submit">
             add
           </Button>
         </div>

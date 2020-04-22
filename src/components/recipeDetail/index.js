@@ -150,25 +150,36 @@ export default function RecipeDetail(props) {
                 : null
               }
 
-              { recipe.orig_link === "none" || recipe.orig_link === ""
-                ? null                      
-                : <div className="recipe-footer">
-                    <div className="d-flex">                      
-                      {
-                        recipe.tags && 
-                        recipe.tags.split("<SEP>").map(tag => (
-                          <div className="chip-container" key={tag}>
-                            <Chip key={tag} variant="outlined" label={tag} />
-                          </div>
-                        ))
-                      }
-                    </div>
-                    <div>
-                      <Button size="small" href={recipe.orig_link} variant="outlined">visit original site</Button>                    
-                    </div>
-                  </div>
-              }
 
+              {/* <hr /> */}
+
+              <div className="recipe-footer">
+                <div className="recipe-footer-tags">                      
+                  {
+                    recipe.tags &&
+                    
+                    <>
+                    {
+                      recipe.tags.split("<SEP>").map(tag => (
+                        <div className="chip-container" key={tag}>
+                          <Chip key={tag} variant="outlined" label={tag} />
+                        </div>
+                      ))
+                    }
+                    </>
+                  }
+                </div>
+                <div className="recipe-footer-link">
+                  {
+                    recipe.orig_link === "none" || recipe.orig_link === ""
+                    ? null
+                    : <div>                        
+                        <Button variant="contained" size="small" href={recipe.orig_link} disableElevation>visit original site</Button>                    
+                      </div>
+                  }
+                </div>
+              </div>
+          
             </div>
 
             <Snackbar

@@ -32,8 +32,13 @@
 .recipe-footer {
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
   margin: 10vh 0;
+}
+
+.recipe-footer-tags {
+  display: flex;
+  align-items: baseline;
+  margin: 0 0 .5rem 0;
 }
 
 h1 {
@@ -57,10 +62,6 @@ h2 {
 
 @media only screen and (max-width: 700px) {
 
-  .recipe-footer {
-    justify-content: center;
-  }
-
   .recipe-header {
     flex-direction: column;
   }
@@ -83,6 +84,11 @@ h2 {
 
   #ingredients-list {
     margin-left: 0;
+  }
+
+  .recipe-footer {
+    justify-content: center;
+    align-items: center;
   }
 
 }

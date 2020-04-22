@@ -35,20 +35,20 @@ export default function App() {
       })
     })
 
-    // console.log('grabbing recipes!')
-    recRef.get().then(query => {
-      query.forEach(doc => {
-        docs.push({...doc.data(), id: doc.id}) 
-      })
+    console.log('GRABBING RECIPES!')
+    // recRef.get().then(query => {
+    //   query.forEach(doc => {
+    //     docs.push({...doc.data(), id: doc.id}) 
+    //   })
 
-      docs.sort((a,b) => b.create_date - a.create_date)
+    //   docs.sort((a,b) => b.create_date - a.create_date)
 
-      setRecipes(docs)
+    //   setRecipes(docs)
 
-    })
-    .catch(err => {
-      console.log(err)
-    })
+    // })
+    // .catch(err => {
+    //   console.log(err)
+    // })
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])

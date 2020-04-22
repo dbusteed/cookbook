@@ -3,10 +3,10 @@ import { Form, Spinner, InputGroup } from 'react-bootstrap'
 import firebase from '../../firebase'
 import { UserContext, MetaContext } from '../../context'
 import { useRouteMatch, useHistory } from 'react-router-dom'
-import categories from '../../other/categories'
+// import categories from '../../other/categories'
 
-import { Chip, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, IconButton } from '@material-ui/core'
-import DeleteRoundedIcon from '@material-ui/icons/DeleteRounded'
+import { Chip, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button } from '@material-ui/core'
+// import DeleteRoundedIcon from '@material-ui/icons/DeleteRounded'
 
 export default function EditRecipe(props) {
   
@@ -23,6 +23,7 @@ export default function EditRecipe(props) {
   const [tag, setTag] = useState('')
   const [allTags, setAllTags] = useState({})
   const [trigger, setTrigger] = useState(0)
+  const [categories, setCategories] = useState([])
   
   // other hooks
   const match = useRouteMatch('/edit/:rid')
@@ -31,6 +32,15 @@ export default function EditRecipe(props) {
   // firebase connections
   const storageRef = firebase.storage().ref()
   const db = firebase.firestore()
+
+  // get categories from meta
+  useEffect(() => {
+
+    let cats = meta.categories.split('<SEP>')
+    setCategories(cats)
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [meta])
 
   useEffect(() => {
     console.log('meta useEffect')
@@ -41,6 +51,8 @@ export default function EditRecipe(props) {
       console.log('grabbing the data')
 
       if (recipe.id) {
+
+        console.log('got the recipe id!')
 
         if (recipe.tags) {
           tags = recipe.tags.split('<SEP>').reduce((res, tag) => {
@@ -77,9 +89,9 @@ export default function EditRecipe(props) {
     setAllTags(tags)
     
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [meta])
+  }, [meta, recipe.id])
   
-  // grab from context?
+  // get the recipe
   useEffect(() => {
     let docRef = db.collection('recipes').doc(match.params.rid)
 
@@ -106,6 +118,9 @@ export default function EditRecipe(props) {
     e.preventDefault()
     
     // TODO better  validation checking crap
+
+    
+    
 
     let formErrors = []
     let img_path = ''
@@ -166,11 +181,14 @@ export default function EditRecipe(props) {
       }
     }
 
+    let tags = Object.entries(allTags).filter(([k,v]) => v).map(([k,v]) => k).join('<SEP>')
+
     let newRecipe = {
       name: recipe.name,
       ingredients: recipe.ingredients.replace(/\n/g, "<SEP>"),
       directions: recipe.directions.replace(/\n/g, "<SEP>"),
       category: recipe.category,
+      tags: tags,
       notes: recipe.notes.replace(/\n/g, "<SEP>"),
       img_path: img_path,
       orig_link: recipe.orig_link,
@@ -245,8 +263,7 @@ export default function EditRecipe(props) {
         </div>
         
         <div>
-          <Button onClick={() => console.log(meta)} variant="contained" color="secondary">delete</Button>
-          {/* <Button onClick={() => setDialog(true)} variant="contained" color="secondary">delete</Button> */}
+          <Button onClick={() => setDialog(true)} variant="contained" color="secondary">delete</Button>
           {/* <IconButton onClick={() => setDialog(true)}>
             <DeleteRoundedIcon style={{color: "black"}} />
           </IconButton> */}
@@ -340,29 +357,27 @@ export default function EditRecipe(props) {
                 />
                 <InputGroup.Append>
                   <Button variant="outlined" onClick={e => {
-                    console.log(meta.tags)
+
+                    let tagLower = tag.toLowerCase()
                     
                     // set allTags, so that the new tag is already selected
-                    setAllTags({...allTags, [tag]: true})
+                    setAllTags({...allTags, [tagLower]: true})
                     
                     let newTags = ''
                     if (meta.tags === '') {
-                      newTags = tag
+                      newTags = tagLower
                     } else {
-                      newTags = meta.tags + `<SEP>${tag}`
+                      newTags = meta.tags + `<SEP>${tagLower}`
                     }
 
                     // set the Meta context, so that subsequent recipes show the new tag
                     setMeta({...meta, tags: newTags})
 
-                    console.log(meta) // meta.categories is undefined?
-                    console.log(newTags)
-
                     // update the DB, so that the new tag is saved
-                    // db.collection('meta').doc('meta').set({
-                    //   catagories: meta.categories,
-                    //   tags: newTags
-                    // })
+                    db.collection('meta').doc('meta').set({
+                      categories: meta.categories,
+                      tags: newTags
+                    })
 
                     // clear the input
                     setTag('')
