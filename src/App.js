@@ -9,6 +9,7 @@ import Login from './components/login'
 import Signup from './components/signup'
 import AddRecipe from './components/addRecipe'
 import EditRecipe from './components/editRecipe'
+import Help from './components/help'
 import { FilterContext, startingFilter, RecipeContext, UserContext, MetaContext } from './context'
 import firebase from './firebase'
 
@@ -75,6 +76,7 @@ export default function App() {
                       <Route path="/signup" component={Signup} />
                       <Route path="/add" component={AddRecipe} />
                       <Route path="/edit" component={EditRecipe} />
+                      <Route path="/help" component={Help} />
                       <Route path="/" component={Recipes}/>
                     </Switch>
                   </div>

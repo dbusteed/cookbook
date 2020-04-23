@@ -211,30 +211,41 @@ export default function AddRecipe(props) {
                 />
                 <InputGroup.Append>
                   <Button variant="outlined" onClick={e => {
-                    
-                    let tagLower = tag.toLowerCase()
-                    
-                    // set allTags, so that the new tag is already selected
-                    setAllTags({...allTags, [tagLower]: true})
-                    
-                    let newTags = ''
-                    if (meta.tags === '') {
-                      newTags = tagLower
-                    } else {
-                      newTags = meta.tags + `<SEP>${tagLower}`
+
+                    // prevent empty tags
+                    if (tag) {
+                      
+                      let tagLower = tag.toLowerCase()
+                      
+                      if (tag in allTags) {
+                        setAllTags({...allTags, [tagLower]: true})
+                      
+                      } else {
+                        // set allTags, so that the new tag is already selected
+                        setAllTags({...allTags, [tagLower]: true})
+                        
+                        let newTags = ''
+                        if (meta.tags === '') {
+                          newTags = tagLower
+                        } else {
+                          newTags = meta.tags + `<SEP>${tagLower}`
+                        }
+                        
+                        // set the Meta context, so that subsequent recipes show the new tag
+                        setMeta({...meta, tags: newTags})
+                        
+                        // update the DB, so that the new tag is saved
+                        db.collection('meta').doc('meta').set({
+                          categories: meta.categories,
+                          tags: newTags
+                        })
+
+                      }
+                      
+                      // clear the input
+                      setTag('')
                     }
-
-                    // set the Meta context, so that subsequent recipes show the new tag
-                    setMeta({...meta, tags: newTags})
-
-                    // update the DB, so that the new tag is saved
-                    db.collection('meta').doc('meta').set({
-                      categories: meta.categories,
-                      tags: newTags
-                    })
-
-                    // clear the input
-                    setTag('')
+                    
                   }}>
                     add tag
                   </Button>

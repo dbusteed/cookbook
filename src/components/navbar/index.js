@@ -19,6 +19,7 @@ import ExitToAppRoundedIcon from '@material-ui/icons/ExitToAppRounded'
 import FilterListRoundedIcon from '@material-ui/icons/FilterListRounded'
 import MenuRoundedIcon from '@material-ui/icons/MenuRounded'
 import SearchRoundedIcon from '@material-ui/icons/SearchRounded'
+// import HelpOutlineRoundedIcon from '@material-ui/icons/HelpOutlineRounded'
 
 export default function NavBar() {
 
@@ -99,10 +100,14 @@ export default function NavBar() {
                 <HomeRoundedIcon style={{color: "black"}} fontSize="large" />
               </IconButton>
             </Link>
-            {/* <Button onClick={() => console.log('debug')}>
-              DEBUG
-            </Button> */}
           </div>
+          {/* <div className="navitem">
+            <Link to="/help">
+              <IconButton>
+                <HelpOutlineRoundedIcon style={{color: "black"}} fontSize="large" />
+              </IconButton>
+            </Link>
+          </div> */}
         </div>
 
         <div className="navbox center-nav-box">
