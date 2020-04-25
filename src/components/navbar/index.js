@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react'
 import './index.css'
 import { Form, FormControl } from 'react-bootstrap'
-import { Link } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 import firebase from '../../firebase'
 import { FilterContext, UserContext, startingFilter, MetaContext } from '../../context'
 
@@ -23,6 +23,7 @@ import SearchRoundedIcon from '@material-ui/icons/SearchRounded'
 
 export default function NavBar() {
 
+  // state variables
   const [search, setSearch] = useState('')
   const [advName, setAdvName] = useState('')
   const [advIng, setAdvIng] = useState('')
@@ -32,9 +33,13 @@ export default function NavBar() {
   const [filterMenu, setFilterMenu] = useState(null)
   const [categories, setCategories] = useState([])
   
+  // context variables
   const {filter, setFilter} = useContext(FilterContext)
   const {user, setUser} = useContext(UserContext)
   const {meta} = useContext(MetaContext)
+
+  // other hooks
+  const history = useHistory()
 
   useEffect(() => {
 
@@ -64,14 +69,21 @@ export default function NavBar() {
   const handleSearch = (s) => {
     setSearch(s)
     setFilter({...filter, search: {...filter.search, title: s.toLowerCase()}})
+    
+    if (window.location.pathName !== '/') {
+      history.push('/')
+    }
+    
   }
 
   const handleCategory = (cat) => {
     setFilter({...filter, category: cat})
+    history.push('/')
   }
 
   const handleUserRecipes = (bool) => {
     setFilter({...filter, userRecipes: bool})
+    history.push('/')
   }
 
   const closeDrawer = () => {
