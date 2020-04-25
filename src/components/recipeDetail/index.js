@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useContext } from 'react'
-import { useRouteMatch } from 'react-router-dom'
+import { useRouteMatch, useHistory } from 'react-router-dom'
 import firebase from '../../firebase'
 import { Spinner } from 'react-bootstrap'
 import './index.css'
 import { Link } from 'react-router-dom'
-import { UserContext } from '../../context'
+import { UserContext, FilterContext } from '../../context'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
 
 // material stuff and icons
@@ -19,6 +19,7 @@ export default function RecipeDetail(props) {
 
   // context variables
   const { user } = useContext(UserContext)
+  const { filter, setFilter } = useContext(FilterContext)
 
   // state variables
   const [recipe, setRecipe] = useState(null)
@@ -28,6 +29,7 @@ export default function RecipeDetail(props) {
 
   // other hooks
   const match = useRouteMatch('/recipe/:rid')
+  const history = useHistory()
 
   // TODO don't call? just read from context?
   useEffect(() => {
@@ -36,6 +38,7 @@ export default function RecipeDetail(props) {
 
     docRef.get().then(doc => {
       setRecipe({ ...doc.data(), id: doc.id })
+      // document.title = doc.data().name
     })
     .catch(err => {
       console.log('ERROR', err)
@@ -49,6 +52,11 @@ export default function RecipeDetail(props) {
   window.addEventListener('resize', () => {
     updateBodyDirection()
   })
+
+  const handleTagFilter = (tag) => {
+    setFilter({...filter, tag: tag})
+    history.push('/')
+  }
 
   const toggleViewOrder = () => {
     columnDirection === 'column' ? setColumnDirection('column-reverse') : setColumnDirection('column')
@@ -111,9 +119,15 @@ export default function RecipeDetail(props) {
                   <h2>Directions</h2>
                   <ul>
                     {
-                      recipe.directions.split('<SEP>').map((dir, idx) => (
-                        <li onClick={strikeThru} className="mb-2 detail-li" key={idx}>{dir}</li>
-                      ))
+                      recipe.directions.split('<SEP>').map((dir, idx) => {
+                        if (dir.startsWith('#')) {
+                          return <p className="list-subheading" key={idx}>{dir.replace('#', '').trim().toUpperCase()}</p>
+                        } else if (dir.trim() === '') {
+                          return <br key={idx} />
+                        } else {
+                          return <li onClick={strikeThru} className="mb-2 detail-li" key={idx}>{dir}</li>
+                        }                        
+                      })
                     }
                   </ul>
                 </div>
@@ -122,9 +136,15 @@ export default function RecipeDetail(props) {
                   <h2>Ingredients</h2>
                   <ul>
                     {
-                      recipe.ingredients.split('<SEP>').map((ing, idx) => (
-                        <li onClick={strikeThru} className="mb-2 detail-li" key={idx}>{ing}</li>
-                      ))
+                      recipe.ingredients.split('<SEP>').map((ing, idx) => {
+                        if (ing.startsWith('#')) {
+                          return <p className="list-subheading" key={idx}>{ing.replace('#', '').trim().toUpperCase()}</p>
+                        } else if (ing.trim() === '') {
+                          return <br key={idx} />
+                        } else {
+                          return <li onClick={strikeThru} className="mb-2 detail-li" key={idx}>{ing}</li>
+                        }
+                      })
                     }
                   </ul>
                 </div>
@@ -162,7 +182,7 @@ export default function RecipeDetail(props) {
                     {
                       recipe.tags.split("<SEP>").map(tag => (
                         <div className="chip-container" key={tag}>
-                          <Chip key={tag} variant="outlined" label={tag} />
+                          <Chip onClick={() => handleTagFilter(tag)} key={tag} variant="outlined" label={tag} />
                         </div>
                       ))
                     }

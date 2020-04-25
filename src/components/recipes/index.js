@@ -10,20 +10,33 @@ export default function Recipes(props) {
   const { filter } = useContext(FilterContext)
   const { user } = useContext(UserContext)
 
+  // filter recipes based using the FilterContext
   let renderRecipes = recipes
 
+  // filter on title
   if (filter.search.title) {
     renderRecipes = renderRecipes.filter(r => r.name.toLowerCase().search(filter.search.title) >= 0)
   }
 
+  // filter on ingredients
   if (filter.search.ingredients) {
     renderRecipes = renderRecipes.filter(r => r.ingredients.toLowerCase().search(filter.search.ingredients) >= 0)
   }
 
+  // filter on tag
+  if (filter.tag) {
+    renderRecipes = renderRecipes.filter(r => {
+      if (r.tags) { return r.tags.split('<SEP>').indexOf(filter.tag) >= 0 }
+      else { return false }
+    })
+  }
+
+  // filter on category
   if (filter.category) {
     renderRecipes = renderRecipes.filter(r => r.category === filter.category)
   }
 
+  // filter on user
   if (user) {
     if (filter.userRecipes) {
       renderRecipes = renderRecipes.filter(r => r.uid === user.uid)
@@ -31,19 +44,22 @@ export default function Recipes(props) {
   }
 
   const filterDetails = () => {
-    let text = `Showing ${filter.userRecipes ? 'my' : 'all'} recipes`
-    text += filter.search.title ? ` with "${filter.search.title}"` : ''
-    // ingredient filter?
-    // tags?
-    text += filter.category ? ` from ${filter.category} category` : ''
-    return text
+    return (
+      <p style={{textAlign: "center"}} className="filter-details m-0">
+        Filter: <span className="bold-detail">{filter.userRecipes ? 'my' : 'all'}</span> recipes        
+        { filter.search.title ? <>, <span className="bold-detail">search: </span>"{filter.search.title}"</> : '' }
+        { filter.search.ingredients ? <>, <span className="bold-detail">ingredients: </span>"{filter.search.ingredients}"</> : '' }
+        { filter.tag ? <>, <span className="bold-detail">tag: </span>{filter.tag}</> : '' }
+        { filter.category ? <>, <span className="bold-detail">category: </span>{filter.category}</> : '' }
+      </p>
+    )
   }
 
   return (
     <div style={{ display: "flex", flexDirection: "column", justifyContent: 'center', alignItems: 'center' }}>
 
-      <div className="filter-details-container p-2 px-3 mb-4" style={{ borderBottom: ".75px solid rgb(192, 192, 192)", borderRadius: "2%" }}>
-        <p style={{textAlign: "center"}} className="filter-details m-0">{filterDetails()}</p>
+      <div className="filter-details-container p-2 px-3 mb-4" style={{ borderBottom: ".75px solid rgb(192, 192, 192)", borderRadius: "2%" }}>        
+        {filterDetails()}
       </div>
 
       {

@@ -102,6 +102,10 @@
 	margin: .12rem;
 }
 
+.bold-detail {
+  font-weight: bold;
+}
+
 @media only screen and (max-width: 700px) {
   #content {
     margin-top: .5rem;
