@@ -1,0 +1,36 @@
+.help-page {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.help-page-main {
+  flex: 2 0;
+  margin: 0 1rem 0 .25rem;
+}
+
+.help-page h1 {
+  text-align: center;
+}
+
+.help-page h2 {
+  margin-left: 1rem;
+  margin-top: 2rem;
+}
+
+.help-page h3 {
+  margin-left: 3rem;
+  margin-top: 1rem;
+}
+
+.help-page li {
+  margin-left: 2rem;
+}
+
+.help-page .h2-list li {
+  margin-left: 1rem;
+}
+
+/* .help-page p {
+  margin-left: 3rem;
+} */

@@ -2,6 +2,11 @@
 	display: flex;
 	align-items: center;
 	flex-direction: column;
-	height: 50vh;
-	margin-top: 5vh;
+	/* height: 50vh; */
+	margin: 5vh 0 7vh 0;
+}
+
+.adv-search-container-form {
+  display: flex;
+  flex-direction: column;
 }
