@@ -23,7 +23,7 @@ export default function RecipeDetail(props) {
 
   // state variables
   const [recipe, setRecipe] = useState(null)
-  const [columnDirection, setColumnDirection] = useState('column')
+  const [columnDirection, setColumnDirection] = useState('column-reverse')
   const [bodyDirection, setBodyDirection] = useState(window.innerWidth > 600 ? 'row' : columnDirection)
   const [snackbar, setSnackbar] = useState(false)
 

@@ -6,7 +6,9 @@ import firebase from '../../firebase'
 import { FilterContext, UserContext, startingFilter, MetaContext } from '../../context'
 
 // material stuff
-import { Drawer, List, ListItem, ListItemText, ListItemIcon, Collapse, TextField, Button, Paper } from '@material-ui/core'
+import { Drawer, List, ListItem, ListItemText, 
+  ListItemIcon, Collapse, TextField, Button, 
+  Paper, FormControl as MUIFC, InputLabel, Select } from '@material-ui/core'
 import Menu from '@material-ui/core/Menu'
 import MenuItem from '@material-ui/core/MenuItem'
 import IconButton from '@material-ui/core/IconButton'
@@ -19,19 +21,20 @@ import ExitToAppRoundedIcon from '@material-ui/icons/ExitToAppRounded'
 import FilterListRoundedIcon from '@material-ui/icons/FilterListRounded'
 import MenuRoundedIcon from '@material-ui/icons/MenuRounded'
 import SearchRoundedIcon from '@material-ui/icons/SearchRounded'
-// import HelpOutlineRoundedIcon from '@material-ui/icons/HelpOutlineRounded'
+import HelpOutlineRoundedIcon from '@material-ui/icons/HelpOutlineRounded'
 
 export default function NavBar() {
 
   // state variables
   const [search, setSearch] = useState('')
-  const [advName, setAdvName] = useState('')
+  const [advTag, setAdvTag] = useState('')
   const [advIng, setAdvIng] = useState('')
   const [drawer, setDrawer] = useState(false)
   const [searchDrawer, setSearchDrawer] = useState(false)
   const [drawerFilter, setDrawerFilter] = useState(false)
   const [filterMenu, setFilterMenu] = useState(null)
   const [categories, setCategories] = useState([])
+  const [tags, setTags] = useState([])
   
   // context variables
   const {filter, setFilter} = useContext(FilterContext)
@@ -45,6 +48,9 @@ export default function NavBar() {
 
     let cats = meta.categories.split('<SEP>')
     setCategories(cats)
+
+    let tags = meta.tags.split('<SEP>')
+    setTags(tags)
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [meta])
@@ -93,8 +99,8 @@ export default function NavBar() {
 
   const resetFilter = () => {
     setSearch('')
-    setAdvName('')
     setAdvIng('')
+    setAdvTag('')
     setFilter({...startingFilter, userRecipes: user ? true : false})
   }
 
@@ -113,13 +119,6 @@ export default function NavBar() {
               </IconButton>
             </Link>
           </div>
-          {/* <div className="navitem">
-            <Link to="/help">
-              <IconButton>
-                <HelpOutlineRoundedIcon style={{color: "black"}} fontSize="large" />
-              </IconButton>
-            </Link>
-          </div> */}
         </div>
 
         <div className="navbox center-nav-box">
@@ -128,9 +127,10 @@ export default function NavBar() {
           </Form>
 
           <IconButton aria-controls="full-filter-menu" aria-haspopup="true" onClick={(e) => setFilterMenu(e.currentTarget)}>
-            <FilterListRoundedIcon style={{color: "black"}} fontSize="large" />
+            <MenuRoundedIcon style={{color: "black"}} fontSize="large" />
           </IconButton>
 
+          {/* Filter / other stuff menu */}
           <Menu
             className="full-filter-menu"
             anchorEl={filterMenu}
@@ -143,15 +143,8 @@ export default function NavBar() {
             onClose={() => setFilterMenu(null)}
             style={{padding: "10px"}}
           >
-            <MenuItem onClick={() => {
-              setSearchDrawer(true)
-              setFilterMenu(null)
-            }}>
-              Advanced Search
-            </MenuItem>
-
-            <hr />
-
+            
+            {/* categories */}
             <MenuItem 
               selected={filter.category === ''} 
               onClick={() => {
@@ -168,6 +161,8 @@ export default function NavBar() {
                   }}>{cat}</MenuItem>
               ))
             }
+
+            {/* user filter */}
             {
               user
               ?
@@ -190,19 +185,60 @@ export default function NavBar() {
               ]
               : null
             }
+
+            <hr />
+            
+            <MenuItem onClick={() => {
+              setSearchDrawer(true)
+              setFilterMenu(null)
+            }}>
+              Advanced Search
+            </MenuItem>
+
+            <Link to="/help" className="text-body text-decoration-none" onClick={() => setFilterMenu(null)}>
+              <MenuItem>
+                Help & Tips
+              </MenuItem>
+            </Link>
+
           </Menu>
 
           <Drawer anchor="top" open={searchDrawer} onClose={() => setSearchDrawer(false)}> 
             <div className="adv-search-container">
               <h2>Advanced Search</h2>
               <hr />
-              <TextField className="mb-2" value={advName} onChange={e => setAdvName(e.target.value)} label="search by name" variant="outlined" />
-              <TextField className="mb-2" value={advIng} onChange={e => setAdvIng(e.target.value)} label="search by ingredient" variant="outlined" />
-              <Button className="my-2" variant="outlined" onClick={() => {                
-                setFilter({...filter, search: {title: advName.toLowerCase(), ingredients: advIng.toLowerCase()}})
-                setDrawer(false)
-                setSearchDrawer(false)
-              }}>search</Button>
+
+              <div className="adv-search-container-form">
+                <TextField className="mb-2" value={advIng} onChange={e => setAdvIng(e.target.value)} label="search by ingredient" variant="outlined" />
+                
+                {/* TODO make this minWidth use flex or something */}
+                <MUIFC className="mb-2" variant="outlined" style={{minWidth: 150}}> 
+                  <InputLabel id="tag-label">search by tag</InputLabel>
+                  <Select
+                    labelId="tag-label"
+                    id="tag-label"
+                    value={advTag}
+                    onChange={e => setAdvTag(e.target.value)}
+                    label="search by tag"
+                  >
+                  <MenuItem value={""}>
+                    <em>none</em>
+                  </MenuItem>
+                  {
+                    tags.map(tag => (
+                      <MenuItem key={tag} value={tag}>{tag}</MenuItem>
+                    ))
+                  }
+                  </Select>
+                </MUIFC>
+               
+                <Button className="my-2" variant="outlined" onClick={() => {                
+                  setFilter({...filter, tag: advTag, search: {...search, ingredients: advIng.toLowerCase()}})
+                  setDrawer(false)
+                  setSearchDrawer(false)
+                  history.push('/')
+                }}>search</Button>
+              </div>
             </div>
           </Drawer>
 
@@ -250,6 +286,8 @@ export default function NavBar() {
           <Drawer open={drawer} onClose={closeDrawer}>
             <div className="mr-4" style={{height: "100%"}}>
               <List>
+
+                {/* HOME */}
                 <Link to={"/"} className="text-body text-decoration-none">
                   <ListItem onClick={() => {
                     closeDrawer()
@@ -259,17 +297,14 @@ export default function NavBar() {
                     <ListItemText primary={"Home"} />
                   </ListItem>
                 </Link>
-                <ListItem onClick={() => {
-                  setSearchDrawer(true)
-                  setFilterMenu(null)
-                }}>
-                  <ListItemIcon><SearchRoundedIcon style={{color: "black"}} /></ListItemIcon>
-                  <ListItemText primary={"Advanced Search"} />
-                </ListItem>
+                
+                {/* FILTER (category, user) */}
                 <ListItem onClick={() => setDrawerFilter(!drawerFilter)}>
                   <ListItemIcon><FilterListRoundedIcon style={{color: "black"}} /></ListItemIcon>
                   <ListItemText primary={"Filter Recipes"} />
                 </ListItem>
+
+                {/* list for the FILTER */}
                 <Collapse in={drawerFilter} timeout="auto">
                   <List className="pl-5">
                     <ListItem selected={filter.category === ''}
@@ -302,6 +337,24 @@ export default function NavBar() {
                     }
                   </List>
                 </Collapse>
+                
+                {/* ADVANCED SEARCH */}
+                <ListItem onClick={() => {
+                  setSearchDrawer(true)
+                  setFilterMenu(null)
+                }}>
+                  <ListItemIcon><SearchRoundedIcon style={{color: "black"}} /></ListItemIcon>
+                  <ListItemText primary={"Advanced Search"} />
+                </ListItem>
+
+                <Link to={"/help"} className="text-body text-decoration-none">
+                  <ListItem onClick={closeDrawer}>
+                    <ListItemIcon><HelpOutlineRoundedIcon style={{color: "black"}} /></ListItemIcon>
+                    <ListItemText primary={"Help & Tips"} />
+                  </ListItem>
+                </Link>
+
+                {/* ADD RECIPE, SIGNIN, SIGNOUT */}
                 {
                   user
                   ? 
