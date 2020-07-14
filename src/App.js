@@ -42,7 +42,19 @@ export default function App() {
         docs.push({...doc.data(), id: doc.id}) 
       })
 
-      docs.sort((a,b) => b.create_date - a.create_date)
+      // sort by date
+      // docs.sort((a,b) => b.create_date - a.create_date)
+
+      // sort by name
+      docs.sort(function(a,b) {
+        if(a.name > b.name) {
+          return 1
+        }
+        if(b.name > a.name) {
+          return -1
+        }
+        return 0
+      })
 
       setRecipes(docs)
 
