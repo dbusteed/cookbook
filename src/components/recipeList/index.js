@@ -3,7 +3,7 @@ import RecipeCard from '../recipeCard'
 import { Spinner } from 'react-bootstrap'
 import { FilterContext, RecipeContext, UserContext } from '../../context'
 
-export default function Recipes(props) {
+export default function RecipeList(props) {
 
   // context variables
   const { recipes } = useContext(RecipeContext)
@@ -39,7 +39,13 @@ export default function Recipes(props) {
   // filter on user
   if (user) {
     if (filter.userRecipes) {
-      renderRecipes = renderRecipes.filter(r => r.uid === user.uid)
+    
+      renderRecipes = renderRecipes.filter(r => {
+        if(r.uid === user.uid) { return true }
+        else if('followers' in r && r.followers.indexOf(user.uid) >= 0) { return true }
+        else { return false }
+      })
+
     }
   }
 

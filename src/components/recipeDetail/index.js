@@ -13,6 +13,8 @@ import Alert from '@material-ui/lab/Alert'
 import EditRoundedIcon from '@material-ui/icons/EditRounded'
 import ViewDayRoundedIcon from '@material-ui/icons/ViewDayRounded'
 import ShareRoundedIcon from '@material-ui/icons/ShareRounded'
+import FileCopyOutlinedIcon from '@material-ui/icons/FileCopyOutlined'
+import FileCopyRoundedIcon from '@material-ui/icons/FileCopyRounded'
 
 
 export default function RecipeDetail(props) {
@@ -26,10 +28,15 @@ export default function RecipeDetail(props) {
   const [columnDirection, setColumnDirection] = useState('column-reverse')
   const [bodyDirection, setBodyDirection] = useState(window.innerWidth > 600 ? 'row' : columnDirection)
   const [snackbar, setSnackbar] = useState(false)
+  const [alertText, setAlertText] = useState(null)
+  const [isFollower, setIsFollower] = useState()
 
   // other hooks
   const match = useRouteMatch('/recipe/:rid')
   const history = useHistory()
+
+  // database
+  const db = firebase.firestore()
 
   // TODO don't call? just read from context?
   useEffect(() => {
@@ -48,6 +55,26 @@ export default function RecipeDetail(props) {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  useEffect(() => {
+    if(recipe) {
+      if(user) {
+        if(recipe.followers) {
+          if(recipe.followers.indexOf(user.uid) >= 0) {
+            setIsFollower(true)
+          } else {
+            setIsFollower(false)
+          }
+        } else {
+          setIsFollower(false)
+        }
+      } else {
+        setIsFollower(false)
+      }
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [recipe])
 
   window.addEventListener('resize', () => {
     updateBodyDirection()
@@ -69,6 +96,74 @@ export default function RecipeDetail(props) {
 
   const strikeThru = (e) => {
     e.currentTarget.style.textDecoration = e.currentTarget.style.textDecoration ? '' : 'line-through'
+  }
+
+  const followRecipe = () => {
+
+    setIsFollower(true)
+
+    let followers = recipe.followers ? recipe.followers : []
+    followers.push(user.uid)
+
+    let thisRecipe = {
+      name: recipe.name,
+      ingredients: recipe.ingredients.replace(/\n/g, "<SEP>"),
+      directions: recipe.directions.replace(/\n/g, "<SEP>"),
+      category: recipe.category,
+      tags: recipe.tags,
+      notes: recipe.notes.replace(/\n/g, "<SEP>"),
+      img_path: recipe.img_path,
+      orig_link: recipe.orig_link,
+      uid: recipe.uid,
+      followers: followers,
+      create_date: recipe.create_date,
+      modify_date: recipe.modify_date
+    }
+
+    db.collection('recipes').doc(recipe.id).set(thisRecipe)
+    .then(res => {
+      setAlertText("Added to your recipes! May need to refresh to see changes...")
+      setSnackbar(true)
+    })
+    .catch(err => {
+      console.log(err)
+      setAlertText("Oops! Something bad happened, please try again later.")
+      setSnackbar(true)
+    })
+  }
+
+  const unfollowRecipe = () => {
+    
+    setIsFollower(false)
+
+    let followers = recipe.followers
+    followers = followers.filter(f => f !== user.uid)
+
+    let thisRecipe = {
+      name: recipe.name,
+      ingredients: recipe.ingredients.replace(/\n/g, "<SEP>"),
+      directions: recipe.directions.replace(/\n/g, "<SEP>"),
+      category: recipe.category,
+      tags: recipe.tags,
+      notes: recipe.notes.replace(/\n/g, "<SEP>"),
+      img_path: recipe.img_path,
+      orig_link: recipe.orig_link,
+      uid: recipe.uid,
+      followers: followers,
+      create_date: recipe.create_date,
+      modify_date: recipe.modify_date
+    }
+
+    db.collection('recipes').doc(recipe.id).set(thisRecipe)
+    .then(res => {
+      setAlertText("Removed to your recipes! May need to refresh to see changes...")
+      setSnackbar(true)
+    })
+    .catch(err => {
+      console.log(err)
+      setAlertText("Oops! Something bad happened, please try again later.")
+      setSnackbar(true)
+    })
   }
 
   return (
@@ -93,7 +188,10 @@ export default function RecipeDetail(props) {
                   </IconButton>   
                   
                   <CopyToClipboard text={window.location.href}>
-                    <IconButton onClick={() => {setSnackbar(true)}}>
+                    <IconButton onClick={() => {
+                        setAlertText("Copied to clipboard")
+                        setSnackbar(true)
+                      }}>
                       <ShareRoundedIcon style={{color: "black"}} fontSize={"small"} />
                     </IconButton>
                   </CopyToClipboard>            
@@ -106,6 +204,22 @@ export default function RecipeDetail(props) {
                           </IconButton>
                         </Link>
                       : null
+                  }
+
+                  {
+                    user && user.uid !== recipe.uid && (!isFollower)
+                    ? <IconButton onClick={followRecipe}>
+                        <FileCopyOutlinedIcon style={{color: "black"}} fontSize={"small"} />
+                      </IconButton>
+                    : null
+                  }
+
+                  {
+                    user && user.uid !== recipe.uid && isFollower
+                    ? <IconButton onClick={unfollowRecipe}>
+                        <FileCopyRoundedIcon style={{color: "black"}} fontSize={"small"} />
+                      </IconButton>
+                    : null
                   }
                   
                 </div>
@@ -170,9 +284,6 @@ export default function RecipeDetail(props) {
                 : null
               }
 
-
-              {/* <hr /> */}
-
               <div className="recipe-footer">
                 <div className="recipe-footer-tags">                      
                   {
@@ -209,7 +320,7 @@ export default function RecipeDetail(props) {
               onClose={() => setSnackbar(false)}
               autoHideDuration={3000}
             >
-              <Alert elevation={6} variant="filled" severity="info">Copied to clipboard</Alert>
+              <Alert elevation={6} variant="filled" severity="info">{alertText}</Alert>
             </Snackbar>
 
           </div>

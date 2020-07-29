@@ -3,7 +3,7 @@ import './App.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import NavBar from './components/navbar'
-import Recipes from './components/recipes'
+import RecipeList from './components/recipeList'
 import RecipeDetail from './components/recipeDetail'
 import Login from './components/login'
 import Signup from './components/signup'
@@ -89,7 +89,7 @@ export default function App() {
                       <Route path="/add" component={AddRecipe} />
                       <Route path="/edit" component={EditRecipe} />
                       <Route path="/help" component={Help} />
-                      <Route path="/" component={Recipes}/>
+                      <Route path="/" component={RecipeList}/>
                     </Switch>
                   </div>
                   <div className="content-gutter"></div>
