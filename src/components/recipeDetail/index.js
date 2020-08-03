@@ -4,7 +4,7 @@ import firebase from '../../firebase'
 import { Spinner } from 'react-bootstrap'
 import './index.css'
 import { Link } from 'react-router-dom'
-import { UserContext, FilterContext } from '../../context'
+import { UserContext, FilterContext, AllUsersContext } from '../../context'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
 
 // material stuff and icons
@@ -21,6 +21,7 @@ export default function RecipeDetail(props) {
 
   // context variables
   const { user } = useContext(UserContext)
+  const { allUsers } = useContext(AllUsersContext)
   const { filter, setFilter } = useContext(FilterContext)
 
   // state variables
@@ -156,7 +157,7 @@ export default function RecipeDetail(props) {
 
     db.collection('recipes').doc(recipe.id).set(thisRecipe)
     .then(res => {
-      setAlertText("Removed to your recipes! May need to refresh to see changes...")
+      setAlertText("Removed from your recipes! May need to refresh to see changes...")
       setSnackbar(true)
     })
     .catch(err => {
@@ -285,29 +286,39 @@ export default function RecipeDetail(props) {
               }
 
               <div className="recipe-footer">
-                <div className="recipe-footer-tags">                      
-                  {
-                    recipe.tags &&
-                    
-                    <>
+                <div className="recipe-footer-left">
+                  <div className="recipe-footer-tags">                      
                     {
-                      recipe.tags.split("<SEP>").map(tag => (
-                        <div className="chip-container" key={tag}>
-                          <Chip onClick={() => handleTagFilter(tag)} key={tag} variant="outlined" label={tag} />
-                        </div>
-                      ))
+                      recipe.tags &&
+                      <>
+                      {
+                        recipe.tags.split("<SEP>").map(tag => (
+                          <div className="chip-container" key={tag}>
+                            <Chip onClick={() => handleTagFilter(tag)} key={tag} variant="outlined" label={tag} />
+                          </div>
+                        ))
+                      }
+                      </>
                     }
-                    </>
-                  }
+                  </div>
+                  <div className="recipe-footer-link">
+                    {
+                      recipe.orig_link === "none" || recipe.orig_link === ""
+                      ? null
+                      : <div>                        
+                          <Button variant="contained" size="small" href={recipe.orig_link} disableElevation>visit original site</Button>                    
+                        </div>
+                    }
+                  </div>
                 </div>
-                <div className="recipe-footer-link">
-                  {
-                    recipe.orig_link === "none" || recipe.orig_link === ""
-                    ? null
-                    : <div>                        
-                        <Button variant="contained" size="small" href={recipe.orig_link} disableElevation>visit original site</Button>                    
-                      </div>
-                  }
+                <div className="recipe-footer-right">
+                  <div className="recipe-footer-owner">
+                    {
+                      user && user.uid === recipe.uid
+                      ? null
+                      : <p>Added by {allUsers[recipe.uid].uname}</p>
+                    }
+                  </div>
                 </div>
               </div>
           

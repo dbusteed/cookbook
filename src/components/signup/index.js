@@ -61,6 +61,11 @@ export default function Signup(props) {
     firebase.auth().createUserWithEmailAndPassword(email, password)
     .then((res) => {
       setUser(res.user)
+
+      // add user info to the database
+      let db = firebase.firestore()
+      let newUser = {'uname': email.split('@')[0]}
+      db.collection('users').doc(res.user.uid).set(newUser)
     })
     .then(() => {
       history.push('/')
@@ -71,8 +76,6 @@ export default function Signup(props) {
     })
 
   }
-
-
   
   return (
     <div style={{display: 'flex', flexDirection: 'row'}}>
@@ -91,7 +94,7 @@ export default function Signup(props) {
           : null
         }
 
-        <Form onSubmit={handleSubmit} style={{display: 'flex', flexDirection: 'column'}}  >
+        <Form onSubmit={handleSubmit} style={{display: 'flex', flexDirection: 'column'}}  >          
           <Form.Group>
             <Form.Label>Email address</Form.Label>
             <Form.Control type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="" />

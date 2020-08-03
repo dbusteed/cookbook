@@ -38,6 +38,7 @@ export default function Login(props) {
 
     firebase.auth().signInWithEmailAndPassword(email, password)
     .then(res => {
+      console.log(res.user)
       setUser(res.user)
       setFilter({...filter, userRecipes: true})
     })

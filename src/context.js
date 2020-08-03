@@ -13,4 +13,5 @@ export const startingFilter = {
 export const FilterContext = createContext(startingFilter)
 export const RecipeContext = createContext([])
 export const UserContext = createContext(null)
+export const AllUsersContext = createContext(null)
 export const MetaContext = createContext(null)

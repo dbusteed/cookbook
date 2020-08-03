@@ -35,7 +35,8 @@ ul {
 
 .recipe-footer {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  justify-content: space-between;
   margin: 10vh 0;
 }
 
@@ -44,6 +45,14 @@ ul {
   align-items: baseline;
   margin: 0 0 1rem 0;
   flex-wrap: wrap;
+}
+
+.recipe-footer-link {
+  margin: 0 0 1.5rem 0;
+}
+
+.recipe-footer-owner p {
+  color: gray;
 }
 
 h1 {
@@ -109,4 +118,7 @@ h3 {
     justify-content: center;
   }
 
+  .recipe-footer {
+    flex-direction: column;
+  }
 }
