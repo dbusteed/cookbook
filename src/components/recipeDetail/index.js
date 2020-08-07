@@ -98,6 +98,18 @@ export default function RecipeDetail(props) {
   const strikeThru = (e) => {
     e.currentTarget.style.textDecoration = e.currentTarget.style.textDecoration ? '' : 'line-through'
   }
+  
+  const showOwner = () => {
+    if(allUsers) {
+      if(user && user.uid === recipe.uid) {
+        return null
+      } else {
+        return <p>Added by {allUsers[recipe.uid].uname}</p>
+      }
+    } else {
+      return null
+    }
+  }
 
   const followRecipe = () => {
 
@@ -313,11 +325,7 @@ export default function RecipeDetail(props) {
                 </div>
                 <div className="recipe-footer-right">
                   <div className="recipe-footer-owner">
-                    {
-                      user && user.uid === recipe.uid
-                      ? null
-                      : <p>Added by {allUsers[recipe.uid].uname}</p>
-                    }
+                    { showOwner() } 
                   </div>
                 </div>
               </div>
