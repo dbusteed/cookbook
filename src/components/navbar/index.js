@@ -22,6 +22,8 @@ import FilterListRoundedIcon from '@material-ui/icons/FilterListRounded'
 import MenuRoundedIcon from '@material-ui/icons/MenuRounded'
 import SearchRoundedIcon from '@material-ui/icons/SearchRounded'
 import HelpOutlineRoundedIcon from '@material-ui/icons/HelpOutlineRounded'
+import AccountCircleRoundedIcon from '@material-ui/icons/AccountCircleRounded'
+import ShoppingCartOutlinedIcon from '@material-ui/icons/ShoppingCartOutlined'
 
 export default function NavBar() {
 
@@ -33,6 +35,7 @@ export default function NavBar() {
   const [searchDrawer, setSearchDrawer] = useState(false)
   const [drawerFilter, setDrawerFilter] = useState(false)
   const [filterMenu, setFilterMenu] = useState(null)
+  const [userMenu, setUserMenu] = useState(null)
   const [categories, setCategories] = useState([])
   const [tags, setTags] = useState([])
   
@@ -112,7 +115,7 @@ export default function NavBar() {
     <>
       <Paper className="full-navbar my-nav" elevation={3}>
         <div className="navbox side-nav-box">
-          <div className="navitem">
+          <div className="navitem">              
             <Link to="/" onClick={resetFilter}>
               <IconButton>
                 <HomeRoundedIcon style={{color: "black"}} fontSize="large" />
@@ -251,14 +254,39 @@ export default function NavBar() {
               ? 
                 <>
                   <Link to="/add">                    
-                      <IconButton>
-                        <AddRoundedIcon style={{color: "black"}} fontSize="large" />
-                      </IconButton>                    
-                  </Link>                                  
-                  
-                  <IconButton onClick={handleSignout}>
-                    <ExitToAppRoundedIcon style={{color: "black"}} fontSize="large" />
-                  </IconButton>                  
+                    <IconButton>
+                      <AddRoundedIcon style={{color: "black"}} fontSize="large" />
+                    </IconButton>                    
+                  </Link>
+
+                  <IconButton onClick={e => setUserMenu(e.currentTarget)}>
+                    <AccountCircleRoundedIcon style={{color: "black"}} fontSize="large" />
+                  </IconButton>
+
+                  <Menu
+                    anchorEl={userMenu}
+                    open={Boolean(userMenu)}
+                    getContentAnchorEl={null}
+                    anchorOrigin={{
+                      vertical: 'bottom',
+                      horizontal: 'left'
+                    }}                  
+                    onClose={() => setUserMenu(null)}
+                    style={{padding: "2rem"}}
+                  >
+                    <Link to="/shopping-list" className="text-body text-decoration-none">
+                      <MenuItem onClick={() => setUserMenu(null)}>
+                        <ListItemIcon><ShoppingCartOutlinedIcon style={{color: "black"}} /></ListItemIcon>
+                        <ListItemText primary={"Shopping List"} />
+                      </MenuItem>
+                    </Link>
+
+                    <MenuItem onClick={handleSignout}>
+                      <ListItemIcon><ExitToAppRoundedIcon style={{color: "black"}} /></ListItemIcon>
+                      <ListItemText primary={"Logout"} />
+                    </MenuItem>
+
+                  </Menu>              
                 </>
 
               : 
@@ -357,6 +385,7 @@ export default function NavBar() {
                 {/* ADD RECIPE, SIGNIN, SIGNOUT */}
                 {
                   user
+                  
                   ? 
                     <>
                       <Link to={"/add"} className="text-body text-decoration-none">
@@ -365,7 +394,14 @@ export default function NavBar() {
                           <ListItemText primary={"Add Recipe"} />
                         </ListItem>
                       </Link>
-                      {/* <Divider /> */}
+
+                      <Link to="/shopping-list" className="text-body text-decoration-none">
+                        <ListItem onClick={closeDrawer}>
+                          <ListItemIcon><ShoppingCartOutlinedIcon style={{color: "black"}} /></ListItemIcon>
+                          <ListItemText primary={"Shopping List"} />
+                        </ListItem>
+                      </Link>
+
                       <Link to={"/"} className="text-body text-decoration-none">
                         <ListItem onClick={() => {
                           handleSignout()
@@ -376,9 +412,9 @@ export default function NavBar() {
                         </ListItem>
                       </Link>
                     </>
+                  
                   : 
                     <>
-                      {/* <Divider /> */}
                       <Link to={"/login"} className="text-body text-decoration-none">
                         <ListItem onClick={closeDrawer}>
                           <ListItemIcon><ExitToAppRoundedIcon style={{color: "black"}} /></ListItemIcon>

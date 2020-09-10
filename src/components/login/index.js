@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react'
 import { Form } from 'react-bootstrap'
 import firebase from '../../firebase'
-import { UserContext, FilterContext } from '../../context'
+import { UserContext, AllUsersContext, FilterContext, User2Context } from '../../context'
 import { useHistory, Link } from 'react-router-dom'
 import { Button } from '@material-ui/core'
 import { Paper } from '@material-ui/core'
@@ -12,8 +12,10 @@ export default function Login(props) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState([])
-
+  
+  const { allUsers } = useContext(AllUsersContext)
   const {setUser} = useContext(UserContext)
+  const {setUser2} = useContext(User2Context)
   const {filter, setFilter} = useContext(FilterContext)
 
   const history = useHistory()
@@ -40,6 +42,7 @@ export default function Login(props) {
     .then(res => {
       console.log(res.user)
       setUser(res.user)
+      setUser2(allUsers[res.user.uid])
       setFilter({...filter, userRecipes: true})
     })
     .then(() => {
@@ -57,7 +60,6 @@ export default function Login(props) {
     <div style={{display: 'flex', flexDirection: 'row'}}>
 
       <div className="content-gutter"></div>
-      {/* <div className="content-gutter-no-collapse"></div> */}
 
       <div className="form-view" style={{flexGrow: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center'}}>
 
@@ -96,7 +98,6 @@ export default function Login(props) {
       
       </div>
 
-      {/* <div className="content-gutter-no-collapse"></div> */}
       <div className="content-gutter"></div>
 
     </div>

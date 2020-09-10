@@ -1,0 +1,137 @@
+.shopping-list-page {
+  display: flex;
+  flex-direction: row;
+}
+
+.shopping-list-main {
+  flex: 5 0 0;
+}
+
+.shopping-list-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.shopping-list-header-left {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.shopping-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.shopping-list-section {
+  display: flex;
+}
+
+.shopping-list-left {
+  flex: 3 0 0;
+}
+
+.shopping-list-right {
+  flex: 7 0 0;
+}
+
+.shopping-list-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.this-content-gutter {
+  flex: 1 0 0;
+}
+
+.shopping-list-mobile {
+  display: none;
+}
+
+.mobile-list-header {
+  margin-top: 1rem;
+  border-bottom: 1px solid #dddddd;
+  font-size: 1.25rem;
+  padding-left: 1rem;
+  font-weight: 500;
+}
+
+.swipe-item-main {
+  height: 7vh;
+  border-bottom: 1px solid #eeeeee;
+  display: flex;
+  flex: 1 0 0;
+  padding-left: 2rem;
+  align-items: center;
+  font-weight: 400;
+}
+
+.delete-tile {
+  background-color: rgb(240, 82, 54);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  height: 100%;
+  width: 100%;
+  padding-right: 1rem;
+}
+
+.delete-tile-inner {
+  display: flex;
+  flex-direction: column;
+}
+
+.delete-tile-inner span {
+  color: white;
+  font-size: 1.25rem;
+}
+
+.edit-tile {
+  background-color: rgb(45, 178, 255);
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  height: 100%;
+  width: 100%;
+  padding-left: 1rem;
+}
+
+.edit-tile-inner {
+  display: flex;
+  flex-direction: column;
+}
+
+.edit-tile-inner span {
+  color: white;
+  font-size: 1.25rem;
+}
+
+@media only screen and (max-width: 1000px) {
+  .shopping-list-main {
+    flex: 7 0 0;
+  }
+
+  .this-content-gutter {
+    flex: 0 0 0;
+  }
+}
+
+@media only screen and (max-width: 700px) {
+  .shopping-list {
+    display: none;
+  }
+
+  .shopping-list-mobile {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .shopping-list-header {
+    justify-content: space-around;
+    align-items: flex-end;
+  }
+}
