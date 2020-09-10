@@ -4,8 +4,9 @@ import firebase from '../../firebase'
 import { Spinner } from 'react-bootstrap'
 import './index.css'
 import { Link } from 'react-router-dom'
-import { UserContext, FilterContext, AllUsersContext } from '../../context'
+import { UserContext, FilterContext, AllUsersContext, User2Context } from '../../context'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
+// import categorize from '../../functions/shoppingCategory'
 
 // material stuff and icons
 import { Button, IconButton, Snackbar, Chip } from '@material-ui/core'
@@ -15,12 +16,15 @@ import ViewDayRoundedIcon from '@material-ui/icons/ViewDayRounded'
 import ShareRoundedIcon from '@material-ui/icons/ShareRounded'
 import FileCopyOutlinedIcon from '@material-ui/icons/FileCopyOutlined'
 import FileCopyRoundedIcon from '@material-ui/icons/FileCopyRounded'
+import ShoppingCartRoundedIcon from '@material-ui/icons/ShoppingCartRounded'
+import ShoppingCartOutlinedIcon from '@material-ui/icons/ShoppingCartOutlined'
 
 
 export default function RecipeDetail(props) {
 
   // context variables
   const { user } = useContext(UserContext)
+  const { user2 } = useContext(User2Context)
   const { allUsers } = useContext(AllUsersContext)
   const { filter, setFilter } = useContext(FilterContext)
 
@@ -31,15 +35,25 @@ export default function RecipeDetail(props) {
   const [snackbar, setSnackbar] = useState(false)
   const [alertText, setAlertText] = useState(null)
   const [isFollower, setIsFollower] = useState()
+  const [isList, setIsList] = useState()
 
   // other hooks
   const match = useRouteMatch('/recipe/:rid')
   const history = useHistory()
 
+  const guid = () => {
+    let s4 = () => {
+        return Math.floor((1 + Math.random()) * 0x10000)
+            .toString(16)
+            .substring(1);
+    }
+    
+    return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+  }
+
   // database
   const db = firebase.firestore()
 
-  // TODO don't call? just read from context?
   useEffect(() => {
     const db = firebase.firestore() // handle bad id
     let docRef = db.collection('recipes').doc(match.params.rid)
@@ -60,6 +74,7 @@ export default function RecipeDetail(props) {
   useEffect(() => {
     if(recipe) {
       if(user) {
+        
         if(recipe.followers) {
           if(recipe.followers.indexOf(user.uid) >= 0) {
             setIsFollower(true)
@@ -69,8 +84,19 @@ export default function RecipeDetail(props) {
         } else {
           setIsFollower(false)
         }
+
       } else {
         setIsFollower(false)
+      }
+
+      if(user2) {
+        if(user2.shoppingListRecipes && user2.shoppingListRecipes[recipe.id]) {
+          setIsList(true)
+        } else {
+          setIsList(false)
+        }
+      } else {
+        setIsList(false)
       }
     }
 
@@ -111,6 +137,70 @@ export default function RecipeDetail(props) {
     }
   }
 
+  const addToList = () => {
+
+    if(user2.shoppingListRecipes) {
+      user2.shoppingListRecipes[recipe.id] = recipe.name
+    } else {
+      let obj = {}
+      obj[recipe.id] = recipe.name
+      user2.shoppingListRecipes = obj
+    }
+
+    let listItems = {}
+    recipe.ingredients.split('<SEP>').forEach(ing => {
+      if(ing && !(ing.startsWith('#'))) {
+        listItems[guid()] = {
+          text: ing.trim(),
+          rid: recipe.id
+        }      
+        // TODO categorize
+      }
+    })
+
+    if(user2.shoppingListItems) {
+      user2.shoppingListItems = {...user2.shoppingListItems, ...listItems}
+    } else {
+      user2.shoppingListItems = listItems
+    }
+
+    db.collection('users').doc(user.uid).set(user2)
+    .then(res => {
+      setIsList(true)
+      setAlertText("Added to your shopping list")
+      setSnackbar(true)
+    })
+    .catch(err => {
+      console.log(err)
+      setAlertText("Oops! Something bad happened, please try again later.")
+      setSnackbar(true)
+    })
+  }
+
+  const removeFromList = () => {
+    
+    delete user2.shoppingListRecipes[recipe.id]
+    user2.shoppingListItems = 
+      Object.keys(user2.shoppingListItems).reduce((obj, key) => {
+        if(user2.shoppingListItems[key].rid !== recipe.id) {
+          obj[key] = user2.shoppingListItems[key]
+        }
+        return obj
+      }, {})
+
+    db.collection('users').doc(user.uid).set(user2)
+    .then(res => {
+      setIsList(false)
+      setAlertText("Removed from your shopping list")
+      setSnackbar(true)
+    })
+    .catch(err => {
+      console.log(err)
+      setAlertText("Oops! Something bad happened, please try again later.")
+      setSnackbar(true)
+    })
+  }
+
   const followRecipe = () => {
 
     setIsFollower(true)
@@ -135,7 +225,7 @@ export default function RecipeDetail(props) {
 
     db.collection('recipes').doc(recipe.id).set(thisRecipe)
     .then(res => {
-      setAlertText("Added to your recipes! May need to refresh to see changes...")
+      setAlertText("Added to your recipes. Refresh to see changes.")
       setSnackbar(true)
     })
     .catch(err => {
@@ -169,7 +259,7 @@ export default function RecipeDetail(props) {
 
     db.collection('recipes').doc(recipe.id).set(thisRecipe)
     .then(res => {
-      setAlertText("Removed from your recipes! May need to refresh to see changes...")
+      setAlertText("Removed from your recipes. Refresh to see changes.")
       setSnackbar(true)
     })
     .catch(err => {
@@ -199,7 +289,23 @@ export default function RecipeDetail(props) {
                   <IconButton id="toggle-button" onClick={toggleViewOrder}>
                     <ViewDayRoundedIcon style={{color: "black"}} fontSize={"small"} />
                   </IconButton>   
-                  
+
+                  {
+                    user && isList
+                    ? <IconButton onClick={removeFromList}>
+                        <ShoppingCartRoundedIcon style={{color: "black"}} fontSize={"small"} />
+                      </IconButton>
+                    : null
+                  }
+
+                  {
+                    user && (!isList)
+                    ? <IconButton onClick={addToList}>
+                        <ShoppingCartOutlinedIcon style={{color: "black"}} fontSize={"small"} />
+                      </IconButton>
+                    : null
+                  }
+
                   <CopyToClipboard text={window.location.href}>
                     <IconButton onClick={() => {
                         setAlertText("Copied to clipboard")

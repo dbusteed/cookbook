@@ -1,0 +1,22 @@
+.shopping-list-item-main {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  height: 1rem;
+}
+
+.shopping-list-item-buttons {
+  margin-left: 0.5rem;
+}
+
+.shopping-list-item-buttons svg {
+  font-size: 1rem;
+}
+
+.shopping-list-item-buttons button {
+  padding: 0.5rem;
+}
+
+.shopping-list-item-li {
+  padding: 0.5rem;
+}

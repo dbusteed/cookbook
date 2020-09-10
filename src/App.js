@@ -10,7 +10,16 @@ import Signup from './components/signup'
 import AddRecipe from './components/addRecipe'
 import EditRecipe from './components/editRecipe'
 import Help from './components/help'
-import { FilterContext, startingFilter, RecipeContext, UserContext, MetaContext, AllUsersContext } from './context'
+import ShoppingList from './components/shoppingList'
+import { 
+  startingFilter, 
+  FilterContext, 
+  RecipeContext,
+  UserContext,
+  MetaContext,
+  AllUsersContext,
+  User2Context
+} from './context'
 import firebase from './firebase'
 
 export default function App() {
@@ -20,6 +29,7 @@ export default function App() {
   const [meta, setMeta] = useState({'tags': '', 'categories': ''})
   const [user, setUser] = useState(null)
   const [allUsers, setAllUsers] = useState(null)
+  const [user2, setUser2] = useState(null)
 
   useEffect(() => {
     const db = firebase.firestore()
@@ -44,7 +54,7 @@ export default function App() {
       setAllUsers(users)
     })
 
-    console.log('GRABBING RECIPES!')
+    // console.log('GRABBING RECIPES!')
     recRef.get().then(query => {
       query.forEach(doc => {
         docs.push({...doc.data(), id: doc.id}) 
@@ -74,6 +84,14 @@ export default function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  useEffect(() => {
+    if(user) {
+      setUser2(allUsers[user.uid])
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [allUsers])
+
   return (
     <Router>
 
@@ -81,33 +99,36 @@ export default function App() {
       <FilterContext.Provider value={{filter, setFilter}}>
         <RecipeContext.Provider value={{recipes, setRecipes}}>
           <UserContext.Provider value={{user, setUser}}>
-            <AllUsersContext.Provider value={{allUsers, setAllUsers}}>
-              <MetaContext.Provider value={{meta, setMeta}}>
+            <User2Context.Provider value={{user2, setUser2}}>
+              <AllUsersContext.Provider value={{allUsers, setAllUsers}}>
+                <MetaContext.Provider value={{meta, setMeta}}>
 
-                <div style={{display: "flex", flexDirection: "column", height: "100vh" }}>
-                  
-                  <NavBar />
-                  
-                  <div id="content">
-                    <div className="content-gutter"></div>
-                    <div className="main-content">
-                      <Switch>
-                        <Route path="/recipe" component={RecipeDetail} />
-                        <Route path="/login" component={Login} />
-                        <Route path="/signup" component={Signup} />
-                        <Route path="/add" component={AddRecipe} />
-                        <Route path="/edit" component={EditRecipe} />
-                        <Route path="/help" component={Help} />
-                        <Route path="/" component={RecipeList}/>
-                      </Switch>
+                  <div style={{display: "flex", flexDirection: "column", height: "100vh" }}>
+                    
+                    <NavBar />
+                    
+                    <div id="content">
+                      <div className="content-gutter"></div>
+                      <div className="main-content">
+                        <Switch>
+                          <Route path="/shopping-list" component={ShoppingList} />
+                          <Route path="/recipe" component={RecipeDetail} />
+                          <Route path="/login" component={Login} />
+                          <Route path="/signup" component={Signup} />
+                          <Route path="/add" component={AddRecipe} />
+                          <Route path="/edit" component={EditRecipe} />
+                          <Route path="/help" component={Help} />
+                          <Route path="/" component={RecipeList}/>
+                        </Switch>
+                      </div>
+                      <div className="content-gutter"></div>
                     </div>
-                    <div className="content-gutter"></div>
+                  
                   </div>
-                
-                </div>
 
-              </MetaContext.Provider>
-            </AllUsersContext.Provider>
+                </MetaContext.Provider>
+              </AllUsersContext.Provider>
+            </User2Context.Provider>
           </UserContext.Provider>
         </RecipeContext.Provider>
       </FilterContext.Provider>
