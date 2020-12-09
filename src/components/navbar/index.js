@@ -73,6 +73,7 @@ export default function NavBar() {
     firebase.auth().signOut()
     setUser(null)
     setFilter({...filter, userRecipes: false})
+    setUserMenu(null)
   }
 
   const handleSearch = (s) => {
@@ -198,12 +199,6 @@ export default function NavBar() {
               Advanced Search
             </MenuItem>
 
-            <Link to="/help" className="text-body text-decoration-none" onClick={() => setFilterMenu(null)}>
-              <MenuItem>
-                Help & Tips
-              </MenuItem>
-            </Link>
-
           </Menu>
 
           <Drawer anchor="top" open={searchDrawer} onClose={() => setSearchDrawer(false)}> 
@@ -278,6 +273,13 @@ export default function NavBar() {
                       <MenuItem onClick={() => setUserMenu(null)}>
                         <ListItemIcon><ShoppingCartOutlinedIcon style={{color: "black"}} /></ListItemIcon>
                         <ListItemText primary={"Shopping List"} />
+                      </MenuItem>
+                    </Link>
+
+                    <Link to="/help" className="text-body text-decoration-none">
+                      <MenuItem onClick={() => setUserMenu(null)}>
+                        <ListItemIcon><HelpOutlineRoundedIcon style={{color: "black"}} /></ListItemIcon>
+                        <ListItemText primary={"Help & Tips"} />
                       </MenuItem>
                     </Link>
 

@@ -6,7 +6,7 @@ import './index.css'
 import { Link } from 'react-router-dom'
 import { UserContext, FilterContext, AllUsersContext, User2Context } from '../../context'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
-// import categorize from '../../functions/shoppingCategory'
+import { assignSection } from '../../functions/shoppingSections'
 
 // material stuff and icons
 import { Button, IconButton, Snackbar, Chip } from '@material-ui/core'
@@ -139,22 +139,15 @@ export default function RecipeDetail(props) {
 
   const addToList = () => {
 
-    if(user2.shoppingListRecipes) {
-      user2.shoppingListRecipes[recipe.id] = recipe.name
-    } else {
-      let obj = {}
-      obj[recipe.id] = recipe.name
-      user2.shoppingListRecipes = obj
-    }
-
     let listItems = {}
     recipe.ingredients.split('<SEP>').forEach(ing => {
       if(ing && !(ing.startsWith('#'))) {
         listItems[guid()] = {
           text: ing.trim(),
-          rid: recipe.id
-        }      
-        // TODO categorize
+          rid: recipe.id,
+          rname: recipe.name,
+          cat: assignSection(ing.trim())
+        }
       }
     })
 
@@ -179,7 +172,6 @@ export default function RecipeDetail(props) {
 
   const removeFromList = () => {
     
-    delete user2.shoppingListRecipes[recipe.id]
     user2.shoppingListItems = 
       Object.keys(user2.shoppingListItems).reduce((obj, key) => {
         if(user2.shoppingListItems[key].rid !== recipe.id) {
