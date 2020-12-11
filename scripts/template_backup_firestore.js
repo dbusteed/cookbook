@@ -3,7 +3,7 @@
 const firebase = require("firebase")
 const fs = require("fs")
 
-// make it a folder with timestamp
+// TODO make it a folder with timestamp
 const outputLoc = "/home/davis/files/backups/cookbook/recipes.json"
 
 const config = {
