@@ -8,10 +8,11 @@ import { IconButton, Button, Snackbar, ButtonGroup } from '@material-ui/core'
 import Alert from '@material-ui/lab/Alert'
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline'
 import FileCopyOutlinedIcon from '@material-ui/icons/FileCopyOutlined'
+import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined'
+import FormatListBulletedOutlinedIcon from '@material-ui/icons/FormatListBulletedOutlined'
 import { SwipeableList, SwipeableListItem } from '@sandstreamdev/react-swipeable-list'
 import '@sandstreamdev/react-swipeable-list/dist/styles.css'
 import firebase from '../../firebase'
-import { assignSection, grocerySections } from '../../functions/shoppingSections'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
 
 
@@ -354,7 +355,7 @@ export default function ShoppingList() {
 
           <div style={{ textAlign: "center" }} className="shopping-list-buttons">
 
-            <ButtonGroup size="small" className="mr-1">
+            {/* <ButtonGroup size="small" className="mr-1">
               <Button
                 variant="contained"
                 color={grouping === "recipe" ? "primary" : ""}
@@ -369,7 +370,18 @@ export default function ShoppingList() {
               >
                 Categories
               </Button>
-            </ButtonGroup>
+            </ButtonGroup> */}
+
+            {
+              grouping === "recipe"
+              ? <IconButton onClick={() => setGrouping("category")}>
+                  <FormatListBulletedOutlinedIcon style={{color: "black"}} />
+                </IconButton>
+            
+              : <IconButton onClick={() => setGrouping("recipe")}>
+                  <FormatListBulletedOutlinedIcon style={{color: "black"}} />
+                </IconButton>
+            }
 
             <IconButton onClick={addListItem}>
               <AddCircleOutlineIcon style={{color: "black"}} />
@@ -384,9 +396,9 @@ export default function ShoppingList() {
               </IconButton>
             {/* </CopyToClipboard> */}
 
-            <Button onClick={deleteList}>
-              delete
-            </Button>
+            <IconButton onClick={deleteList}>
+              <DeleteOutlinedIcon style={{color: "black"}} />
+            </IconButton>
                   
           </div>
         </div>

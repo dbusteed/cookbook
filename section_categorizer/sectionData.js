@@ -30,7 +30,7 @@ const sectionData = {
       "sprout","squash","star fruit","starfruit","strawberry","sweet potato","sweetcorn",
       "tamarillo","tamarind","tangelo","tangerine","taro","tat soi","tayberry",
       "tomato","topinambur","tubers","turnip","wasabi","water chestnut","watercress",
-      "watermelon","yam","yuzu","zucchini","butternut squash"
+      "watermelon","yam","yuzu","zucchini",
     ]
   },
   "Cooking Needs": {
@@ -93,38 +93,4 @@ const sectionData = {
       "soy sauce","syrup",
     ]
   },
-}
-
-Object.keys(sectionData).map(k => {
-  sectionData[k]['regex'] = new RegExp(sectionData[k]['keywords'].join('|'), 'i')
-})
-
-const regexLookup = Object.entries(sectionData).map(([k,v]) => [k, v.regex])
-
-export const assignSection = (ing) => {
-
-  let catMatches = []
-
-  for(let i=0; i<regexLookup.length; i++) {
-    if(regexLookup[i][1].test(ing)) {
-      catMatches.push(regexLookup[i][0])
-    }
-  }
-
-  if (catMatches.length === 0) {
-    return "Other"
-  } else if (catMatches.length === 1) {
-    return catMatches[0]
-  } else {
-    let maxLength = 0
-    let maxLabel = "Other"
-    catMatches.forEach(cat => {
-      let matchLength = sectionData[cat].regex.exec(ing)[0].length
-      if (matchLength > maxLength) {
-        maxLength = matchLength
-        maxLabel = cat
-      }
-    })
-    return maxLabel
-  }
 }

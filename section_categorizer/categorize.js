@@ -1,3 +1,10 @@
+#!/home/davis/opt/node/bin/node
+
+const fs = require('fs')
+
+let ing = fs.readFileSync('ing.txt', 'utf8').toString()
+ing = ing.split("\n")
+
 const sectionData = {
   "Dairy": {
     keywords: [
@@ -30,7 +37,7 @@ const sectionData = {
       "sprout","squash","star fruit","starfruit","strawberry","sweet potato","sweetcorn",
       "tamarillo","tamarind","tangelo","tangerine","taro","tat soi","tayberry",
       "tomato","topinambur","tubers","turnip","wasabi","water chestnut","watercress",
-      "watermelon","yam","yuzu","zucchini","butternut squash"
+      "watermelon","yam","yuzu","zucchini",
     ]
   },
   "Cooking Needs": {
@@ -101,7 +108,7 @@ Object.keys(sectionData).map(k => {
 
 const regexLookup = Object.entries(sectionData).map(([k,v]) => [k, v.regex])
 
-export const assignSection = (ing) => {
+const assignSection = (ing) => {
 
   let catMatches = []
 
@@ -111,9 +118,9 @@ export const assignSection = (ing) => {
     }
   }
 
-  if (catMatches.length === 0) {
+  if (catMatches.length == 0) {
     return "Other"
-  } else if (catMatches.length === 1) {
+  } else if (catMatches.length == 1) {
     return catMatches[0]
   } else {
     let maxLength = 0
@@ -128,3 +135,12 @@ export const assignSection = (ing) => {
     return maxLabel
   }
 }
+
+let outString = 'section,ingredient\n'
+
+ing.forEach(i => {
+  sec = assignSection(i)
+  outString += `${sec},${i}\n`
+})
+
+fs.writeFileSync("out.csv", outString)
