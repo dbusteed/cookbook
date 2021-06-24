@@ -55,31 +55,31 @@ export default function App() {
     })
 
     // console.log('GRABBING RECIPES!')
-    recRef.get().then(query => {
-      query.forEach(doc => {
-        docs.push({...doc.data(), id: doc.id}) 
-      })
+    // recRef.get().then(query => {
+    //   query.forEach(doc => {
+    //     docs.push({...doc.data(), id: doc.id}) 
+    //   })
 
-      // sort by date
-      // docs.sort((a,b) => b.create_date - a.create_date)
+    //   // sort by date
+    //   // docs.sort((a,b) => b.create_date - a.create_date)
 
-      // sort by name
-      docs.sort(function(a,b) {
-        if(a.name > b.name) {
-          return 1
-        }
-        if(b.name > a.name) {
-          return -1
-        }
-        return 0
-      })
+    //   // sort by name
+    //   docs.sort(function(a,b) {
+    //     if(a.name > b.name) {
+    //       return 1
+    //     }
+    //     if(b.name > a.name) {
+    //       return -1
+    //     }
+    //     return 0
+    //   })
 
-      setRecipes(docs)
+    //   setRecipes(docs)
 
-    })
-    .catch(err => {
-      console.log(err)
-    })
+    // })
+    // .catch(err => {
+    //   console.log(err)
+    // })
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])

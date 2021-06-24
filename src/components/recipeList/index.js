@@ -1,13 +1,15 @@
 import React, { useContext } from 'react'
+import './index.css'
 import RecipeCard from '../recipeCard'
 import { Spinner } from 'react-bootstrap'
 import { FilterContext, RecipeContext, UserContext } from '../../context'
+import { Chip } from '@material-ui/core'
 
 export default function RecipeList(props) {
 
   // context variables
   const { recipes } = useContext(RecipeContext)
-  const { filter } = useContext(FilterContext)
+  const { filter, setFilter } = useContext(FilterContext)
   const { user } = useContext(UserContext)
 
   // filter recipes based using the FilterContext
@@ -50,23 +52,56 @@ export default function RecipeList(props) {
   }
 
   const filterDetails = () => {
-    return (
-      <p style={{textAlign: "center"}} className="filter-details m-0">
-        Filter: <span className="bold-detail">{filter.userRecipes ? 'my' : 'all'}</span> recipes        
-        { filter.search.title ? <>, <span className="bold-detail">search: </span>"{filter.search.title}"</> : '' }
-        { filter.search.ingredients ? <>, <span className="bold-detail">ingredients: </span>"{filter.search.ingredients}"</> : '' }
-        { filter.tag ? <>, <span className="bold-detail">tag: </span>{filter.tag}</> : '' }
-        { filter.category ? <>, <span className="bold-detail">category: </span>{filter.category}</> : '' }
-      </p>
-    )
+    if (filter.userRecipes ||
+        filter.category ||
+        filter.tag ||
+        filter.search.ingredients) {
+
+      return (
+        <div className="filter-details-container p-2 px-3 mb-4" style={{ borderBottom: ".75px solid rgb(192, 192, 192)", borderRadius: "2%" }}>
+          {
+            filter.userRecipes &&
+            <Chip className="filter-chip" size="small" variant="outlined" onDelete={() => {
+              setFilter({...filter, userRecipes: false})
+            }} label={"My Recipes"} />
+          }
+
+          {/* {
+            filter.search.title &&
+            <Chip className="filter-chip" size="small" variant="outlined" onDelete={() => {
+              setFilter({...filter, search: {...filter.search, title: ''}})
+            }} label={`"${filter.search.title}"`} />
+          } */}
+          
+          {
+            filter.category &&
+            <Chip className="filter-chip" size="small" variant="outlined" onDelete={() => {
+              setFilter({...filter, category: ''})
+            }} label={filter.category} />
+          }
+
+          {
+            filter.tag &&
+            <Chip className="filter-chip" size="small" variant="outlined" onDelete={() => {
+              setFilter({...filter, tag: ''})
+            }} label={filter.tag} />
+          }
+
+          {
+            filter.search.ingredients &&
+            <Chip className="filter-chip" size="small" variant="outlined" onDelete={() => {
+              setFilter({...filter, search: {...filter.search, ingredients: ''}})
+            }} label={`"${filter.search.ingredients}"`} />
+          }
+        </div>
+      )
+    }
   }
 
   return (
     <div style={{ display: "flex", flexDirection: "column", justifyContent: 'center', alignItems: 'center' }}>
 
-      <div className="filter-details-container p-2 px-3 mb-4" style={{ borderBottom: ".75px solid rgb(192, 192, 192)", borderRadius: "2%" }}>        
-        {filterDetails()}
-      </div>
+      {filterDetails()}
 
       {
         renderRecipes
