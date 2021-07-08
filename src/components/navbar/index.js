@@ -357,11 +357,11 @@ export default function NavBar() {
                           
                           <ListItem className="pb-3" style={{"justifyContent": "space-around"}}>
                             <>
-                              <Button variant={advUser ? "contained" : "text"} onClick={() => {
+                              <Button variant={filter.userRecipes ? "contained" : "text"} onClick={() => {
                                 setAdvUser(true)
                                 handleUserRecipes(true)
                               }}>My Recipes</Button>
-                              <Button variant={advUser ? "text" : "contained"} onClick={() => {
+                              <Button variant={filter.userRecipes ? "text" : "contained"} onClick={() => {
                                 setAdvUser(false)
                                 handleUserRecipes(false)
                               }}>All Recipes</Button>

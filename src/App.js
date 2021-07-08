@@ -31,6 +31,14 @@ export default function App() {
   const [allUsers, setAllUsers] = useState(null)
   const [user2, setUser2] = useState(null)
 
+  // const alphaSort = (a,b) => {
+  //   if (a > b) {
+  //     return 1
+  //   } else {
+  //     return -1
+  //   }
+  // }
+
   useEffect(() => {
     const db = firebase.firestore()
     let recRef = db.collection('recipes')
@@ -38,9 +46,10 @@ export default function App() {
 
     let metaRef = db.collection('meta').doc('meta')
     metaRef.get().then(doc => {
+      console.log(doc.data().tags)
       setMeta({
         'categories': doc.data().categories,
-        'tags': doc.data().tags
+        'tags': doc.data().tags//.sort(alphaSort)
       })
     })
 
@@ -54,32 +63,32 @@ export default function App() {
       setAllUsers(users)
     })
 
-    // console.log('GRABBING RECIPES!')
-    // recRef.get().then(query => {
-    //   query.forEach(doc => {
-    //     docs.push({...doc.data(), id: doc.id}) 
-    //   })
+    console.log('GRABBING RECIPES!')
+    recRef.get().then(query => {
+      query.forEach(doc => {
+        docs.push({...doc.data(), id: doc.id}) 
+      })
 
-    //   // sort by date
-    //   // docs.sort((a,b) => b.create_date - a.create_date)
+      // sort by date
+      // docs.sort((a,b) => b.create_date - a.create_date)
 
-    //   // sort by name
-    //   docs.sort(function(a,b) {
-    //     if(a.name > b.name) {
-    //       return 1
-    //     }
-    //     if(b.name > a.name) {
-    //       return -1
-    //     }
-    //     return 0
-    //   })
+      // sort by name
+      docs.sort(function(a,b) {
+        if(a.name > b.name) {
+          return 1
+        }
+        if(b.name > a.name) {
+          return -1
+        }
+        return 0
+      })
 
-    //   setRecipes(docs)
+      setRecipes(docs)
 
-    // })
-    // .catch(err => {
-    //   console.log(err)
-    // })
+    })
+    .catch(err => {
+      console.log(err)
+    })
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])

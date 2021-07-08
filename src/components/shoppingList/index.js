@@ -261,25 +261,19 @@ export default function ShoppingList() {
 
           <div className="shopping-list-mobile">
             {
-              Object.entries(sections)
-                .sort((a,b) => {
-                  if(a[0] < b[0]) {
-                    return 1
-                  } else {
-                    return -1
-                  }
-                })
-                .map(([rid, rname], idx) => (
-                  <div className="shopping-list-mobile-section" key={idx}>
+              sections
+                .map(sec => (
+                  <div className="shopping-list-mobile-section" key={sec}>
                     <div className="mobile-list-header">
-                      <span>{rname}</span>
+                      <span>{recipeLookup[sec]}</span>
                     </div>
                     {
                       Object.entries(listItems)
-                        .filter(([k, v]) => v.rid === rid)
-                        .map(([key, item], idx2) => (
+                        .filter(([k, v]) => (v.rid === sec || v.cat === sec))
+                        // .filter(([k, v]) => v.rid === rid)
+                        .map(([key, item], idx) => (
                           <SwipeableList
-                            key={idx2}
+                            key={idx}
                             threshold={0.20}
                           >
                             <SwipeableListItem
@@ -372,7 +366,7 @@ export default function ShoppingList() {
               </Button>
             </ButtonGroup> */}
 
-            {
+            {/* {
               grouping === "recipe"
               ? <IconButton onClick={() => setGrouping("category")}>
                   <FormatListBulletedOutlinedIcon style={{color: "black"}} />
@@ -381,22 +375,22 @@ export default function ShoppingList() {
               : <IconButton onClick={() => setGrouping("recipe")}>
                   <FormatListBulletedOutlinedIcon style={{color: "black"}} />
                 </IconButton>
-            }
+            } */}
 
             <IconButton onClick={addListItem}>
               <AddCircleOutlineIcon style={{color: "black"}} />
             </IconButton>
 
-            {/* <CopyToClipboard text={listItemsToText()}> */}
+            <CopyToClipboard text={listItemsToText()}>
               <IconButton onClick={() => {
-                // setSnackbar(true)
-                console.log(sections)
+                setSnackbar(true)
               }}>
                 <FileCopyOutlinedIcon style={{color: "black"}} />
               </IconButton>
-            {/* </CopyToClipboard> */}
+            </CopyToClipboard>
 
-            <IconButton onClick={deleteList}>
+            <IconButton onClick={() => console.log(sections, listItems)}>
+            {/* <IconButton onClick={deleteList}> */}
               <DeleteOutlinedIcon style={{color: "black"}} />
             </IconButton>
                   
@@ -406,7 +400,6 @@ export default function ShoppingList() {
         <hr />
 
         {renderList()}
-
 
         <div className="shopping-list-bottom">
         {
