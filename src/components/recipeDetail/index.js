@@ -308,7 +308,7 @@ export default function RecipeDetail(props) {
                   </CopyToClipboard>            
                   
                   {
-                    user && user.uid === recipe.uid                      
+                    user && (user.uid === recipe.uid || user.uid == 'bwf2xYmzWWNATWIExkT9zA1B5ax1')
                       ? <Link to={`/edit/${recipe.id}`}>
                           <IconButton>
                             <EditRoundedIcon style={{color: "black"}} fontSize={"small"} />

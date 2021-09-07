@@ -192,7 +192,7 @@ export default function EditRecipe(props) {
       notes: recipe.notes.replace(/\n/g, "<SEP>"),
       img_path: img_path,
       orig_link: recipe.orig_link,
-      uid: user.uid,
+      uid: recipe.uid,
       create_date: recipe.create_date,
       modify_date: Date.now()
     }
@@ -242,7 +242,7 @@ export default function EditRecipe(props) {
     setDialog(false)
   }
 
-  if (!user || user.uid !== recipe.uid) {
+  if (!user || (user.uid !== recipe.uid && user.uid !== 'bwf2xYmzWWNATWIExkT9zA1B5ax1')) {
     return (
       <Spinner animation="border" role="status">
         <span className="sr-only">Loading...</span>
