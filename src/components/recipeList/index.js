@@ -3,7 +3,7 @@ import './index.css'
 import RecipeCard from '../recipeCard'
 import { Spinner } from 'react-bootstrap'
 import { FilterContext, RecipeContext, UserContext } from '../../context'
-import { Chip } from '@material-ui/core'
+import Chip from '@mui/material/Chip'
 
 export default function RecipeList(props) {
 

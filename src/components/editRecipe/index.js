@@ -5,8 +5,13 @@ import { UserContext, MetaContext } from '../../context'
 import { useRouteMatch, useHistory } from 'react-router-dom'
 // import categories from '../../other/categories'
 
-import { Chip, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button } from '@material-ui/core'
-// import DeleteRoundedIcon from '@material-ui/icons/DeleteRounded'
+import Button from '@mui/material/Button'
+import Chip from '@mui/material/Chip'
+import Dialog from '@mui/material/Dialog'
+import DialogActions from '@mui/material/DialogActions'
+import DialogContent from '@mui/material/DialogContent'
+import DialogContentText from '@mui/material/DialogContentText'
+import DialogTitle from '@mui/material/DialogTitle'
 
 export default function EditRecipe(props) {
   

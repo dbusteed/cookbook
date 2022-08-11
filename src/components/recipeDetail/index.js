@@ -9,15 +9,18 @@ import { CopyToClipboard } from 'react-copy-to-clipboard'
 import { assignSection } from '../../functions/shoppingSections'
 
 // material stuff and icons
-import { Button, IconButton, Snackbar, Chip } from '@material-ui/core'
-import Alert from '@material-ui/lab/Alert'
-import EditRoundedIcon from '@material-ui/icons/EditRounded'
-import ViewDayRoundedIcon from '@material-ui/icons/ViewDayRounded'
-import ShareRoundedIcon from '@material-ui/icons/ShareRounded'
-import FileCopyOutlinedIcon from '@material-ui/icons/FileCopyOutlined'
-import FileCopyRoundedIcon from '@material-ui/icons/FileCopyRounded'
-import ShoppingCartRoundedIcon from '@material-ui/icons/ShoppingCartRounded'
-import ShoppingCartOutlinedIcon from '@material-ui/icons/ShoppingCartOutlined'
+import Button from '@mui/material/Button'
+import IconButton from '@mui/material/IconButton'
+import Snackbar from '@mui/material/Snackbar'
+import Chip from '@mui/material/Chip'
+import Alert from '@mui/material/Alert'
+import EditRoundedIcon from '@mui/icons-material/EditRounded'
+import ViewDayRoundedIcon from '@mui/icons-material/ViewDayRounded'
+import ShareRoundedIcon from '@mui/icons-material/ShareRounded'
+import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined'
+import FileCopyRoundedIcon from '@mui/icons-material/FileCopyRounded'
+import ShoppingCartRoundedIcon from '@mui/icons-material/ShoppingCartRounded'
+import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined'
 
 
 export default function RecipeDetail(props) {

@@ -1,6 +1,6 @@
 import React, { useState } from "react"
-import { IconButton } from "@material-ui/core"
-import CloseRoundedIcon from '@material-ui/icons/CloseRounded'
+import IconButton from '@mui/material/IconButton'
+import CloseRoundedIcon from '@mui/icons-material/CloseRounded'
 import './index.css'
 
 const StaticListItem = ({

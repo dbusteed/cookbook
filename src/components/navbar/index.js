@@ -1,39 +1,46 @@
 import React, { useState, useContext, useEffect } from 'react'
 import './index.css'
-import { Form, FormControl } from 'react-bootstrap'
+import { Form, FormControl, InputGroup } from 'react-bootstrap'
 import { Link, useHistory } from 'react-router-dom'
 import firebase from '../../firebase'
 import { FilterContext, UserContext, startingFilter, MetaContext } from '../../context'
 
 // material stuff
-import { Drawer, List, ListItem, ListItemText, 
-  ListItemIcon, Collapse, TextField, Button,
-  Paper, FormControl as MUIFC, InputLabel, Select
-} from '@material-ui/core'
-import Menu from '@material-ui/core/Menu'
-import MenuItem from '@material-ui/core/MenuItem'
-import IconButton from '@material-ui/core/IconButton'
-import Divider from '@material-ui/core/Divider'
+import Drawer from '@mui/material/Drawer'
+import List from '@mui/material/List'
+import ListItem from '@mui/material/ListItem'
+import ListItemText from '@mui/material/ListItemText'
+import ListItemIcon from '@mui/material/ListItemIcon'
+import Collapse from '@mui/material/Collapse'
+import TextField from '@mui/material/TextField'
+import Button from '@mui/material/Button'
+import Paper from '@mui/material/Paper'
+import { FormControl as MUIFC } from '@mui/material'
+import InputLabel from '@mui/material/InputLabel'
+import Select from '@mui/material/Select'
+import Menu from '@mui/material/Menu'
+import MenuItem from '@mui/material/MenuItem'
+import IconButton from '@mui/material/IconButton'
 
 // material icons
-import HomeRoundedIcon from '@material-ui/icons/HomeRounded'
-import AddRoundedIcon from '@material-ui/icons/AddRounded'
-import ExitToAppRoundedIcon from '@material-ui/icons/ExitToAppRounded'
-import FilterListRoundedIcon from '@material-ui/icons/FilterListRounded'
-import MenuRoundedIcon from '@material-ui/icons/MenuRounded'
-import SearchRoundedIcon from '@material-ui/icons/SearchRounded'
-import HelpOutlineRoundedIcon from '@material-ui/icons/HelpOutlineRounded'
-import AccountCircleRoundedIcon from '@material-ui/icons/AccountCircleRounded'
-import ShoppingCartOutlinedIcon from '@material-ui/icons/ShoppingCartOutlined'
+import AddRoundedIcon from '@mui/icons-material/AddRounded'
+import HomeRoundedIcon from '@mui/icons-material/HomeRounded'
+import MenuRoundedIcon from '@mui/icons-material/MenuRounded'
+import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
+import ExitToAppRoundedIcon from '@mui/icons-material/ExitToAppRounded'
+import FilterListRoundedIcon from '@mui/icons-material/FilterListRounded'
+import HelpOutlineRoundedIcon from '@mui/icons-material/HelpOutlineRounded'
+import AccountCircleRoundedIcon from '@mui/icons-material/AccountCircleRounded'
+import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined'
 
 export default function NavBar() {
 
   // state variables
   const [search, setSearch] = useState('')
-  const [advTag, setAdvTag] = useState('')
-  const [advIng, setAdvIng] = useState('')
-  const [advCat, setAdvCat] = useState('')
-  const [advUser, setAdvUser] = useState('')
+  const [_1, setAdvTag] = useState('')
+  const [_2, setAdvIng] = useState('')
+  const [_3, setAdvCat] = useState('')
+  const [_4, setAdvUser] = useState('')
   const [drawer, setDrawer] = useState(false)
   const [drawerFilter, setDrawerFilter] = useState(false)
   const [filterMenu, setFilterMenu] = useState(null)
@@ -48,6 +55,10 @@ export default function NavBar() {
 
   // other hooks
   const history = useHistory()
+
+  // const theme = createTheme({
+  //   components:
+  // });
 
   useEffect(() => {
     let cats = meta.categories.split('<SEP>')
@@ -72,15 +83,7 @@ export default function NavBar() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // useEffect(() => {
-  //   console.log('yeet')
-  //   setAdvCat(filter.category)
-
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [filter])
-
   const handleSignout = () => {
-    console.log('signing out!')
     firebase.auth().signOut()
     setUser(null)
     setFilter({...filter, userRecipes: false})
@@ -107,14 +110,11 @@ export default function NavBar() {
   }
 
   const closeDrawer = () => {
-    setDrawer(false)
     setDrawerFilter(false)
+    setDrawer(false)
   }
 
   const clearFilter = () => {
-    // setSearch('')
-    // setAdvIng('')
-    // setAdvTag('')
     setFilter({...startingFilter})
   }
 
@@ -137,7 +137,10 @@ export default function NavBar() {
 
         <div className="navbox center-nav-box">
           <Form onSubmit={e => e.preventDefault()} inline>
-            <FormControl type="text" placeholder="Search" value={search}  onChange={e => handleSearch(e.target.value)} />            
+            <FormControl type="text" placeholder="Search" value={search}  onChange={e => handleSearch(e.target.value)} />
+            <span className="search-x" style={{"display": search ? "block" : "none"}}>
+              <ClearRoundedIcon onClick={() => handleSearch('')} />
+            </span>
           </Form>
 
           <IconButton aria-controls="full-filter-menu" aria-haspopup="true" onClick={(e) => setFilterMenu(e.currentTarget)}>
@@ -325,6 +328,10 @@ export default function NavBar() {
           
           <Form onSubmit={e => e.preventDefault()} style={{flexFlow: "nowrap", justifyContent: "flex-end", flexGrow: "1"}} inline> 
             <FormControl type="text" placeholder="Search" className="mr-3" value={search} onChange={e => handleSearch(e.target.value)} />
+            {/* TODO how to get the X on the mobile view? */}
+            {/* <span className="search-x" style={{"display": search ? "block" : "none", "paddingLeft": "-3rem"}}>
+              <ClearRoundedIcon onClick={() => handleSearch('')} />
+            </span> */}
           </Form>
           
           <Drawer open={drawer} onClose={closeDrawer}>
