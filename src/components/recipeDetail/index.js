@@ -6,18 +6,21 @@ import './index.css'
 import { Link } from 'react-router-dom'
 import { UserContext, FilterContext, AllUsersContext, User2Context } from '../../context'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
-// import categorize from '../../functions/shoppingCategory'
+import { assignSection } from '../../functions/shoppingSections'
 
 // material stuff and icons
-import { Button, IconButton, Snackbar, Chip } from '@material-ui/core'
-import Alert from '@material-ui/lab/Alert'
-import EditRoundedIcon from '@material-ui/icons/EditRounded'
-import ViewDayRoundedIcon from '@material-ui/icons/ViewDayRounded'
-import ShareRoundedIcon from '@material-ui/icons/ShareRounded'
-import FileCopyOutlinedIcon from '@material-ui/icons/FileCopyOutlined'
-import FileCopyRoundedIcon from '@material-ui/icons/FileCopyRounded'
-import ShoppingCartRoundedIcon from '@material-ui/icons/ShoppingCartRounded'
-import ShoppingCartOutlinedIcon from '@material-ui/icons/ShoppingCartOutlined'
+import Button from '@mui/material/Button'
+import IconButton from '@mui/material/IconButton'
+import Snackbar from '@mui/material/Snackbar'
+import Chip from '@mui/material/Chip'
+import Alert from '@mui/material/Alert'
+import EditRoundedIcon from '@mui/icons-material/EditRounded'
+import ViewDayRoundedIcon from '@mui/icons-material/ViewDayRounded'
+import ShareRoundedIcon from '@mui/icons-material/ShareRounded'
+import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined'
+import FileCopyRoundedIcon from '@mui/icons-material/FileCopyRounded'
+import ShoppingCartRoundedIcon from '@mui/icons-material/ShoppingCartRounded'
+import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined'
 
 
 export default function RecipeDetail(props) {
@@ -139,22 +142,15 @@ export default function RecipeDetail(props) {
 
   const addToList = () => {
 
-    if(user2.shoppingListRecipes) {
-      user2.shoppingListRecipes[recipe.id] = recipe.name
-    } else {
-      let obj = {}
-      obj[recipe.id] = recipe.name
-      user2.shoppingListRecipes = obj
-    }
-
     let listItems = {}
     recipe.ingredients.split('<SEP>').forEach(ing => {
       if(ing && !(ing.startsWith('#'))) {
         listItems[guid()] = {
           text: ing.trim(),
-          rid: recipe.id
-        }      
-        // TODO categorize
+          rid: recipe.id,
+          rname: recipe.name,
+          cat: assignSection(ing.trim())
+        }
       }
     })
 
@@ -179,7 +175,6 @@ export default function RecipeDetail(props) {
 
   const removeFromList = () => {
     
-    delete user2.shoppingListRecipes[recipe.id]
     user2.shoppingListItems = 
       Object.keys(user2.shoppingListItems).reduce((obj, key) => {
         if(user2.shoppingListItems[key].rid !== recipe.id) {
@@ -316,7 +311,7 @@ export default function RecipeDetail(props) {
                   </CopyToClipboard>            
                   
                   {
-                    user && user.uid === recipe.uid                      
+                    user && (user.uid === recipe.uid || user.uid == 'bwf2xYmzWWNATWIExkT9zA1B5ax1')
                       ? <Link to={`/edit/${recipe.id}`}>
                           <IconButton>
                             <EditRoundedIcon style={{color: "black"}} fontSize={"small"} />

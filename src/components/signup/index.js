@@ -4,7 +4,8 @@ import firebase from '../../firebase'
 import { secret } from '../../secret' // "secret" is just some value
 import { UserContext } from '../../context'
 import { useHistory, Link } from 'react-router-dom'
-import { Button, Paper } from '@material-ui/core'
+import Button from '@mui/material/Button'
+import Paper from '@mui/material/Paper'
 
 export default function Signup(props) {
 

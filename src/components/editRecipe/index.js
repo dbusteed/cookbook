@@ -5,8 +5,13 @@ import { UserContext, MetaContext } from '../../context'
 import { useRouteMatch, useHistory } from 'react-router-dom'
 // import categories from '../../other/categories'
 
-import { Chip, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button } from '@material-ui/core'
-// import DeleteRoundedIcon from '@material-ui/icons/DeleteRounded'
+import Button from '@mui/material/Button'
+import Chip from '@mui/material/Chip'
+import Dialog from '@mui/material/Dialog'
+import DialogActions from '@mui/material/DialogActions'
+import DialogContent from '@mui/material/DialogContent'
+import DialogContentText from '@mui/material/DialogContentText'
+import DialogTitle from '@mui/material/DialogTitle'
 
 export default function EditRecipe(props) {
   
@@ -192,7 +197,7 @@ export default function EditRecipe(props) {
       notes: recipe.notes.replace(/\n/g, "<SEP>"),
       img_path: img_path,
       orig_link: recipe.orig_link,
-      uid: user.uid,
+      uid: recipe.uid,
       create_date: recipe.create_date,
       modify_date: Date.now()
     }
@@ -242,7 +247,7 @@ export default function EditRecipe(props) {
     setDialog(false)
   }
 
-  if (!user || user.uid !== recipe.uid) {
+  if (!user || (user.uid !== recipe.uid && user.uid !== 'bwf2xYmzWWNATWIExkT9zA1B5ax1')) {
     return (
       <Spinner animation="border" role="status">
         <span className="sr-only">Loading...</span>

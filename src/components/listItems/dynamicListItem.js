@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react"
-import { IconButton } from "@material-ui/core"
-import CloseRoundedIcon from '@material-ui/icons/CloseRounded'
+import IconButton from '@mui/material/IconButton'
+import CloseRoundedIcon from '@mui/icons-material/CloseRounded'
 import './index.css'
 
 const DynamicListItem = ({
@@ -10,6 +10,7 @@ const DynamicListItem = ({
   placeholder,
   children,
   removeItem,
+  updateItem,
   initEditing,
   ...props
 }) => {
@@ -19,6 +20,7 @@ const DynamicListItem = ({
 
   useEffect(() => {
     if (childRef && childRef.current && isEditing === true) {
+      childRef.current.value = text
       childRef.current.focus()
       childRef.current.select()
     }
@@ -34,6 +36,7 @@ const DynamicListItem = ({
       (type !== "textarea" && allKeys.indexOf(key) > -1)
     ) {
       setEditing(false)
+      updateItem()
     }
   }
 
@@ -47,7 +50,10 @@ const DynamicListItem = ({
 
           ? (
             <div
-              onBlur={() => setEditing(false)}
+              onBlur={() => {
+                setEditing(false)
+                updateItem()
+              }}
               onKeyDown={e => handleKeyDown(e, type)}
             >
               {children}

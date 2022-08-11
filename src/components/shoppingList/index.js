@@ -4,10 +4,14 @@ import './index.css'
 import DynamicListItem from '../listItems/dynamicListItem'
 import StaticListItem from '../listItems/staticListItem'
 import SwipeListItem from '../listItems/swipeListItem'
-import { IconButton, Button, Snackbar } from '@material-ui/core'
-import Alert from '@material-ui/lab/Alert'
-import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline'
-import FileCopyOutlinedIcon from '@material-ui/icons/FileCopyOutlined'
+import IconButton from '@mui/material/IconButton'
+import Button from '@mui/material/Button'
+import Snackbar from '@mui/material/Snackbar'
+import Alert from '@mui/material/Alert'
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline'
+import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined'
+import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined'
+import FormatListBulletedOutlinedIcon from '@mui/icons-material/FormatListBulletedOutlined'
 import { SwipeableList, SwipeableListItem } from '@sandstreamdev/react-swipeable-list'
 import '@sandstreamdev/react-swipeable-list/dist/styles.css'
 import firebase from '../../firebase'
@@ -23,14 +27,42 @@ export default function ShoppingList() {
   const inputRef2 = useRef()
   const [listItems, setListItems] = useState({})
   const [sections, setSections] = useState([])
+  const [recipeLookup, setRecipeLookup] = useState({})
+  const [renderSections, setRenderSections] = useState([])
   const [isSaved, setIsSaved] = useState(true)
   const [snackbar, setSnackbar] = useState(false)
+  const [grouping, setGrouping] = useState("recipe")
 
   const db = firebase.firestore()
 
+  const alphaSort = (a,b) => {
+    if (a > b) {
+      return 1
+    } else {
+      return -1
+    }
+  }
+
   useEffect(() => {
     if(user2) {
-      setSections(user2.shoppingListRecipes)
+
+      setRecipeLookup(
+        Object.values(user2.shoppingListItems)
+          .reduce((obj, li) => {
+            obj[li.rid] = li.rname
+            return obj
+          }, {'zzzzz': 'Other'})
+      )
+
+      setSections(
+        Array.from(
+          new Set(
+            Object.values(user2.shoppingListItems)
+              .map(item => item.rid)
+          )
+        )
+      )
+      
       setListItems(
         Object.keys(user2.shoppingListItems)
           .reduce((obj, k) => {
@@ -43,6 +75,32 @@ export default function ShoppingList() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user2])
 
+  useEffect(() => {
+    if(user2) {
+      if(grouping === 'recipe') {
+        setSections(
+          Array.from(
+            new Set(
+              Object.values(listItems)
+                .map(item => item.rid)
+            )
+          ).sort(alphaSort)
+        )
+      } else {
+        setSections(
+          Array.from(
+            new Set(
+              Object.values(listItems)
+                .map(item => item.cat)
+            )
+          ).sort(alphaSort)
+        )
+      }
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [grouping, listItems])
+
   const guid = () => {
     let s4 = () => {
       return Math.floor((1 + Math.random()) * 0x10000)
@@ -54,24 +112,18 @@ export default function ShoppingList() {
 
   const addListItem = () => {
     setIsSaved(false)
-    setListItems({...listItems, [guid()]: {rid: 'ZZZZZ', text: "", editing: true}})
-    setSections({...sections, 'ZZZZZ': 'Other'})
-    // window.scrollTo(0, 100)
+    setListItems(
+      {
+        ...listItems,
+        [guid()]: {
+          rid: 'zzzzz', rname: "Other", text: "", editing: true, cat: "Other"
+        }
+      }
+    )
   }
 
-  const removeListItem = (key, rid) => {
+  const removeListItem = (key) => {
     setIsSaved(false)
-
-    let allRids = Object.values(listItems).map(x => x.rid)
-    allRids.splice(allRids.indexOf(rid), 1)
-    let uniqueRids = new Set(allRids)
-
-    setSections(
-      Array.from(uniqueRids).reduce((obj, k) => {
-        obj[k] = sections[k]
-        return obj
-      }, {})
-    )
     
     setListItems(
       Object.keys(listItems).reduce((obj, k) => {
@@ -86,18 +138,9 @@ export default function ShoppingList() {
   const removeSection = (key) => {
     setIsSaved(false)
 
-    setSections(
-      Object.keys(sections).reduce((obj, k) => {
-        if(k !== key) {
-          obj[k] = sections[k]
-        }
-        return obj
-      }, {})
-    )
-
     setListItems(
       Object.keys(listItems).reduce((obj, k) => {
-        if(listItems[k].rid !== key) {
+        if(listItems[k].rid !== key && listItems[k].cat !== key) {
           obj[k] = listItems[k]
         }
         return obj
@@ -106,10 +149,23 @@ export default function ShoppingList() {
   }
 
   const saveList = () => {
-    user2.shoppingListRecipes = sections
+    // user2.shoppingListRecipes = sections
     user2.shoppingListItems = listItems
 
     setIsSaved(true)
+
+    db.collection('users').doc(user.uid).set(user2)
+    .then(res => {
+      // pass
+    })
+    .catch(err => {
+      console.log(err)
+    })
+  }
+
+  const deleteList = () => {
+    setListItems([])
+    user2.shoppingListItems = {}
 
     db.collection('users').doc(user.uid).set(user2)
     .then(res => {
@@ -151,29 +207,29 @@ export default function ShoppingList() {
           <>
           <div className="shopping-list">
             {
-              Object.entries(sections)
-                .sort((a,b) => {
-                  if(a[0] < b[0]) {
-                    return 1
-                  } else {
-                    return -1
-                  }
-                })
-                .map(([rid, rname]) => (
-                  <div className="shopping-list-section" key={rid}>
+              sections
+                .map((sec) => (
+                  <div className="shopping-list-section" key={sec}>
                     <div className="shopping-list-left">
                       <ul style={{listStyle: "none", marginBottom: "0"}}>
-                        <StaticListItem
-                          text={rname}
-                          removeItem={() => removeSection(rid)}
-                        />
+                        {
+                          grouping === 'recipe'
+                          ? <StaticListItem
+                              text={recipeLookup[sec]}
+                              removeItem={() => removeSection(sec)}
+                            />
+                          : <StaticListItem
+                              text={sec}
+                              removeItem={() => removeSection(sec)}
+                            />
+                        }
                       </ul>
                     </div>
                     <div className="shopping-list-right">
                       <ul style={{listStyle: "none", marginBottom: "0"}}>
                         {
                           Object.entries(listItems)
-                            .filter(([k, v]) => v.rid === rid)
+                            .filter(([k, v]) => (v.rid === sec || v.cat === sec))
                             .map(([key, item], idx) => (
                               <DynamicListItem
                                 key={key}
@@ -181,20 +237,19 @@ export default function ShoppingList() {
                                 childRef={inputRef}
                                 placeholder="Enter shopping list item"
                                 type="input"
-                                removeItem={() => removeListItem(key, listItems[key].rid)}
+                                removeItem={() => removeListItem(key)}
+                                updateItem={() => {
+                                  setIsSaved(false)
+                                  setListItems({...listItems, [key]: {...item, text: inputRef.current.value}})
+                                }}
                                 initEditing={listItems[key].text ? false : true}
                               >
                                 <input
                                   ref={inputRef}
                                   type="text"
                                   name={idx}
-                                  value={listItems[key].text}
                                   style={{width: "50%"}}
                                   autoComplete="off"
-                                  onChange={e => {
-                                    setIsSaved(false)
-                                    setListItems({...listItems, [key]: {...item, text: e.target.value}})}
-                                  } 
                                 />
                               </DynamicListItem>
                             ))
@@ -208,31 +263,25 @@ export default function ShoppingList() {
 
           <div className="shopping-list-mobile">
             {
-              Object.entries(sections)
-                .sort((a,b) => {
-                  if(a[0] < b[0]) {
-                    return 1
-                  } else {
-                    return -1
-                  }
-                })
-                .map(([rid, rname], idx) => (
-                  <div className="shopping-list-mobile-section" key={idx}>
+              sections
+                .map(sec => (
+                  <div className="shopping-list-mobile-section" key={sec}>
                     <div className="mobile-list-header">
-                      <span>{rname}</span>
+                      <span>{recipeLookup[sec]}</span>
                     </div>
                     {
                       Object.entries(listItems)
-                        .filter(([k, v]) => v.rid === rid)
-                        .map(([key, item], idx2) => (
+                        .filter(([k, v]) => (v.rid === sec || v.cat === sec))
+                        // .filter(([k, v]) => v.rid === rid)
+                        .map(([key, item], idx) => (
                           <SwipeableList
-                            key={idx2}
+                            key={idx}
                             threshold={0.20}
                           >
                             <SwipeableListItem
                               swipeLeft={{
                                 content: deleteTile,
-                                action: () => removeListItem(key, listItems[key].rid)
+                                action: () => removeListItem(key)
                               }}
                               swipeRight={{
                                 content: editTile,
@@ -302,6 +351,34 @@ export default function ShoppingList() {
 
           <div style={{ textAlign: "center" }} className="shopping-list-buttons">
 
+            {/* <ButtonGroup size="small" className="mr-1">
+              <Button
+                variant="contained"
+                color={grouping === "recipe" ? "primary" : ""}
+                onClick={() => setGrouping("recipe")}
+              >
+                Recipes
+              </Button>
+              <Button
+                variant="contained"
+                color={grouping === "recipe" ? "" : "primary"}
+                onClick={() => setGrouping("category")}
+              >
+                Categories
+              </Button>
+            </ButtonGroup> */}
+
+            {/* {
+              grouping === "recipe"
+              ? <IconButton onClick={() => setGrouping("category")}>
+                  <FormatListBulletedOutlinedIcon style={{color: "black"}} />
+                </IconButton>
+            
+              : <IconButton onClick={() => setGrouping("recipe")}>
+                  <FormatListBulletedOutlinedIcon style={{color: "black"}} />
+                </IconButton>
+            } */}
+
             <IconButton onClick={addListItem}>
               <AddCircleOutlineIcon style={{color: "black"}} />
             </IconButton>
@@ -313,6 +390,11 @@ export default function ShoppingList() {
                 <FileCopyOutlinedIcon style={{color: "black"}} />
               </IconButton>
             </CopyToClipboard>
+
+            <IconButton onClick={() => console.log(sections, listItems)}>
+            {/* <IconButton onClick={deleteList}> */}
+              <DeleteOutlinedIcon style={{color: "black"}} />
+            </IconButton>
                   
           </div>
         </div>
@@ -320,7 +402,6 @@ export default function ShoppingList() {
         <hr />
 
         {renderList()}
-
 
         <div className="shopping-list-bottom">
         {

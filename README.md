@@ -2,6 +2,12 @@
 
 ## About
 
+<!-- 
+    NOTE TO SELF:
+
+    https://stackoverflow.com/questions/48826489/react-production-router-404-after-deep-refresh-firebase
+-->
+=======
 A simple online cookbook that I made for my wife.
 
 It's built with React and Firebase, although the [original version](https://github.com/dbusteed/cookbook-old) was made with Django.

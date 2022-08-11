@@ -5,7 +5,8 @@ import Login from '../login'
 import firebase from '../../firebase'
 import { UserContext, MetaContext } from '../../context'
 import { useHistory } from 'react-router-dom'
-import { Button, Chip } from '@material-ui/core'
+import Button from '@mui/material/Button'
+import Chip from '@mui/material/Chip'
 
 export default function AddRecipe(props) {
   

@@ -3,8 +3,8 @@ import { Form } from 'react-bootstrap'
 import firebase from '../../firebase'
 import { UserContext, AllUsersContext, FilterContext, User2Context } from '../../context'
 import { useHistory, Link } from 'react-router-dom'
-import { Button } from '@material-ui/core'
-import { Paper } from '@material-ui/core'
+import Button from '@mui/material/Button'
+import Paper from '@mui/material/Paper'
 
 export default function Login(props) {
 
