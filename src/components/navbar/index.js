@@ -326,12 +326,12 @@ export default function NavBar() {
             <MenuRoundedIcon style={{color: "black"}} fontSize="large" />
           </IconButton>
           
-          <Form onSubmit={e => e.preventDefault()} style={{flexFlow: "nowrap", justifyContent: "flex-end", flexGrow: "1"}} inline> 
-            <FormControl type="text" placeholder="Search" className="mr-3" value={search} onChange={e => handleSearch(e.target.value)} />
+          <Form onSubmit={e => e.preventDefault()} style={{flexFlow: "nowrap", justifyContent: "flex-end", flexGrow: "1"}} className="mr-3" inline> 
+            <FormControl type="text" placeholder="Search" value={search} onChange={e => handleSearch(e.target.value)} />
             {/* TODO how to get the X on the mobile view? */}
-            {/* <span className="search-x" style={{"display": search ? "block" : "none", "paddingLeft": "-3rem"}}>
+            <span className="search-x" style={{"display": search ? "block" : "none", "paddingLeft": "-3rem"}}>
               <ClearRoundedIcon onClick={() => handleSearch('')} />
-            </span> */}
+            </span>
           </Form>
           
           <Drawer open={drawer} onClose={closeDrawer}>
