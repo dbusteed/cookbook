@@ -139,7 +139,7 @@ export default function NavBar() {
           <Form onSubmit={e => e.preventDefault()} inline>
             <FormControl type="text" placeholder="Search" value={search}  onChange={e => handleSearch(e.target.value)} />
             <span className="search-x" style={{"display": search ? "block" : "none"}}>
-              <ClearRoundedIcon style={{"color": "#495057"}} onClick={() => handleSearch('')} />
+              <ClearRoundedIcon style={{"color": "#6C747C"}} onClick={() => handleSearch('')} />
             </span>
           </Form>
 
@@ -329,7 +329,7 @@ export default function NavBar() {
           <Form onSubmit={e => e.preventDefault()} style={{flexFlow: "nowrap", justifyContent: "flex-end", flexGrow: "1"}} className="mr-3" inline> 
             <FormControl type="text" placeholder="Search" value={search} onChange={e => handleSearch(e.target.value)} />
             <span className="search-x" style={{"display": search ? "block" : "none", "paddingLeft": "-3rem"}}>
-              <ClearRoundedIcon style={{"color": "#495057"}} onClick={() => handleSearch('')} />
+              <ClearRoundedIcon style={{"color": "#6C747C"}} onClick={() => handleSearch('')} />
             </span>
           </Form>
           
