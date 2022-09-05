@@ -268,7 +268,7 @@ export default function EditRecipe(props) {
         </div>
         
         <div>
-          <Button onClick={() => setDialog(true)} variant="contained" color="secondary">delete</Button>
+          <Button onClick={() => setDialog(true)} variant="contained" color="error">delete</Button>
           {/* <IconButton onClick={() => setDialog(true)}>
             <DeleteRoundedIcon style={{color: "black"}} />
           </IconButton> */}
@@ -288,7 +288,7 @@ export default function EditRecipe(props) {
               <Button variant="contained" color="primary" onClick={() => handleDelete(false)}>
                 Nevermind
               </Button>
-              <Button variant="contained" color="secondary" onClick={() => handleDelete(true)}>
+              <Button variant="contained" color="error" onClick={() => handleDelete(true)}>
                 Yes, delete recipe
               </Button>
             </DialogActions>
