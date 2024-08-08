@@ -1,10 +1,8 @@
-#!/home/davis/opt/node/bin/node
-
 const firebase = require("firebase")
 const fs = require("fs")
 
 // TODO add timestamp to filename
-const outputLoc = "/home/davis/files/backups/cookbook/recipes.json"
+const outputLoc = "/path/to/cookbook_backup_YYYY_MM_DD.json"
 
 const config = {
     apiKey: "",
